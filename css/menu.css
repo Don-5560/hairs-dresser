@@ -1,0 +1,802 @@
+@charset "UTF-8";
+
+/* =====================
+  CSS変数（index.htmlと共通）
+===================== */
+:root {
+  --blue: #A8CADD;
+  --blue-dark: #6A9BB5;
+  --blue-light: #D8EAF4;
+  --blue-pale: #EFF6FB;
+  --black: #1a1a1a;
+  --gray: #6b6b6b;
+  --bg: #f7f5f2;
+  --white: #ffffff;
+}
+
+
+/* =====================
+  リセット・共通
+===================== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  background-color: var(--bg);
+  color: var(--black);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+img {
+  max-width: 100%;
+  vertical-align: bottom;
+}
+
+a {
+  text-decoration: none;
+  color: var(--black);
+}
+
+li {
+  list-style: none;
+}
+
+
+/* =====================
+  ナビゲーション（index.htmlと同じ）
+===================== */
+#nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 72px;
+  background-color: rgba(247, 245, 242, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(168, 202, 221, 0.3);
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  color: var(--black);
+  z-index: 200;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+}
+
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--gray);
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: var(--blue-dark);
+}
+
+/* 現在のページのリンク */
+.nav-links a.active {
+  color: var(--blue-dark);
+  font-weight: 400;
+}
+
+.nav-cta {
+  background-color: var(--blue-dark);
+  color: var(--white) !important;
+  padding: 10px 24px;
+  border-radius: 2px;
+}
+
+.nav-cta:hover {
+  background-color: var(--blue) !important;
+  color: var(--black) !important;
+}
+
+
+/* =====================
+  ハンバーガーボタン
+===================== */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 200;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background-color: var(--black);
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+
+/* =====================
+  モバイルメニュー
+===================== */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(247, 245, 242, 0.98);
+  backdrop-filter: blur(16px);
+  z-index: 150;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu.open {
+  display: flex;
+  opacity: 1;
+}
+
+.mobile-menu ul {
+  text-align: center;
+  width: 100%;
+}
+
+.mobile-menu ul li {
+  border-bottom: 1px solid rgba(168, 202, 221, 0.3);
+}
+
+.mobile-menu ul li:first-child {
+  border-top: 1px solid rgba(168, 202, 221, 0.3);
+}
+
+.mobile-menu ul li a {
+  display: block;
+  padding: 24px 60px;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--gray);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.mobile-menu ul li a:hover {
+  color: var(--blue-dark);
+  background-color: var(--blue-pale);
+}
+
+.mobile-cta {
+  margin-top: 32px;
+  background-color: var(--blue-dark);
+  color: var(--white);
+  padding: 16px 48px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  border-radius: 2px;
+}
+
+.mobile-close {
+  margin-top: 24px;
+  background: none;
+  border: 1px solid rgba(168, 202, 221, 0.5);
+  color: var(--gray);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  padding: 12px 40px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.mobile-close:hover {
+  background-color: var(--blue-pale);
+  color: var(--blue-dark);
+}
+
+
+/* =====================
+  ページヒーロー
+===================== */
+.page-hero {
+  padding-top: 72px;
+  background-color: var(--blue-dark);
+  padding-bottom: 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景の大きい透かし文字 */
+.page-hero::before {
+  content: 'MENU';
+  position: absolute;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(120px, 20vw, 220px);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.05);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -40%);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.page-hero-inner {
+  position: relative;
+  z-index: 1;
+  padding: 60px 20px 0;
+}
+
+.page-hero-label {
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ラベルの両サイドの線 */
+.page-hero-label::before,
+.page-hero-label::after {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.3);
+  display: block;
+}
+
+.page-hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(44px, 6vw, 72px);
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  margin-bottom: 20px;
+}
+
+.page-hero-title em {
+  font-style: italic;
+  color: var(--blue-light);
+}
+
+.page-hero-desc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.1em;
+  line-height: 2;
+}
+
+
+/* =====================
+  注意書き帯
+===================== */
+.notice-bar {
+  background-color: var(--blue-pale);
+  border-top: 1px solid rgba(168, 202, 221, 0.4);
+  border-bottom: 1px solid rgba(168, 202, 221, 0.4);
+  padding: 16px 80px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  font-size: 11px;
+  color: var(--blue-dark);
+  letter-spacing: 0.05em;
+  flex-wrap: wrap;
+}
+
+.notice-bar span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+/* =====================
+  メニューコンテンツ（全体ラッパー）
+===================== */
+.menu-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 40px 120px;
+}
+
+
+/* =====================
+  カテゴリーナビ
+===================== */
+.category-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 64px;
+}
+
+.cat-btn {
+  background: none;
+  border: 1px solid rgba(168, 202, 221, 0.5);
+  color: var(--gray);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  padding: 10px 20px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  transition: all 0.2s;
+}
+
+.cat-btn:hover,
+.cat-btn.active {
+  background-color: var(--blue-dark);
+  border-color: var(--blue-dark);
+  color: var(--white);
+}
+
+
+/* =====================
+  メニューセクション（各カテゴリー）
+===================== */
+.menu-section {
+  margin-bottom: 72px;
+}
+
+.menu-section-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(168, 202, 221, 0.4);
+}
+
+/* 01 / 02... の番号 */
+.menu-section-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  color: var(--blue-dark);
+  letter-spacing: 0.1em;
+}
+
+.menu-section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 300;
+  color: var(--black);
+  line-height: 1;
+}
+
+.menu-section-title em {
+  font-style: italic;
+  color: var(--blue-dark);
+}
+
+/* 右端のサブテキスト */
+.menu-section-desc {
+  font-size: 11px;
+  color: var(--gray);
+  margin-left: auto;
+  text-align: right;
+  letter-spacing: 0.05em;
+  line-height: 1.8;
+}
+
+
+/* =====================
+  メニュー行（各アイテム）
+===================== */
+.menu-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(168, 202, 221, 0.2);
+  gap: 20px;
+  transition: background-color 0.2s, padding 0.2s, margin 0.2s;
+}
+
+.menu-row:hover {
+  background-color: var(--blue-pale);
+  padding-left: 12px;
+  padding-right: 12px;
+  margin: 0 -12px;
+}
+
+.menu-row-name {
+  flex: 1;
+  font-size: 14px;
+  color: var(--black);
+  line-height: 1.5;
+}
+
+.menu-row-name small {
+  display: block;
+  font-size: 11px;
+  color: var(--gray);
+  margin-top: 3px;
+  letter-spacing: 0.03em;
+}
+
+/* 所要時間 */
+.menu-row-time {
+  font-size: 11px;
+  color: var(--gray);
+  letter-spacing: 0.05em;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* 価格 */
+.menu-row-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--blue-dark);
+  text-align: right;
+  min-width: 120px;
+  line-height: 1;
+}
+
+.menu-row-price span {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 11px;
+  color: var(--gray);
+  display: block;
+  margin-top: 2px;
+  letter-spacing: 0.05em;
+}
+
+/* バッジ（おすすめ・人気） */
+.menu-row-badge {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--blue-dark);
+  background-color: var(--blue-light);
+  padding: 3px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.menu-row-badge.popular {
+  background-color: var(--blue-dark);
+  color: var(--white);
+}
+
+
+/* =====================
+  セットメニューカード
+===================== */
+.set-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.set-card {
+  background-color: var(--white);
+  border: 1px solid rgba(168, 202, 221, 0.4);
+  border-radius: 4px;
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.set-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(106, 155, 181, 0.15);
+}
+
+/* カード上部のカラーライン */
+.set-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--blue-dark));
+}
+
+/* おすすめカード（濃い色） */
+.set-card.featured::before {
+  background: linear-gradient(90deg, var(--blue-dark), #4a7a99);
+}
+
+.set-card-badge {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--white);
+  background-color: var(--blue-dark);
+  padding: 4px 10px;
+  border-radius: 2px;
+  margin-bottom: 14px;
+}
+
+.set-card-name {
+  font-size: 14px;
+  color: var(--black);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.set-card-detail {
+  font-size: 11px;
+  color: var(--gray);
+  line-height: 1.9;
+  margin-bottom: 20px;
+  letter-spacing: 0.03em;
+}
+
+/* 価格エリア（定価 → 割引後） */
+.set-card-price-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.set-card-price-old {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  color: var(--gray);
+  text-decoration: line-through;
+}
+
+.set-card-price-new {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--blue-dark);
+  line-height: 1;
+}
+
+.set-card-price-note {
+  font-size: 10px;
+  color: var(--gray);
+  margin-top: 4px;
+  letter-spacing: 0.05em;
+}
+
+
+/* =====================
+  料金補足ボックス
+===================== */
+.price-note-box {
+  background-color: var(--blue-pale);
+  border: 1px solid rgba(168, 202, 221, 0.4);
+  border-left: 3px solid var(--blue-dark);
+  border-radius: 0 4px 4px 0;
+  padding: 24px 28px;
+  margin-top: 40px;
+}
+
+.price-note-box p {
+  font-size: 12px;
+  color: var(--blue-dark);
+  line-height: 2.2;
+  letter-spacing: 0.05em;
+}
+
+
+/* =====================
+  CTA（予約・お問い合わせ）
+===================== */
+.menu-cta {
+  background-color: var(--blue-dark);
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.menu-cta-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 300;
+  color: var(--white);
+  margin-bottom: 16px;
+  letter-spacing: 0.05em;
+}
+
+.menu-cta-title em {
+  font-style: italic;
+  color: var(--blue-light);
+}
+
+.menu-cta-desc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 40px;
+  letter-spacing: 0.1em;
+  line-height: 2;
+}
+
+.menu-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--white);
+  color: var(--blue-dark);
+  padding: 18px 48px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  border-radius: 2px;
+  transition: all 0.25s;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+}
+
+.menu-cta-btn:hover {
+  background-color: var(--blue-light);
+  gap: 24px;
+}
+
+
+/* =====================
+  フッター（index.htmlと同じ）
+===================== */
+#footer {
+  background-color: var(--black);
+  padding: 64px 80px 32px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 32px;
+}
+
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+
+.footer-tagline {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footer-right {
+  text-align: right;
+}
+
+.footer-right p {
+  font-size: 12px;
+  line-height: 2.2;
+}
+
+.footer-copy {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+
+/* =====================
+  レスポンシブ（768px以下）
+===================== */
+@media screen and (max-width: 768px) {
+
+  /* ナビ */
+  #nav {
+    padding: 0 20px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  /* 注意書き帯 */
+  .notice-bar {
+    padding: 16px 24px;
+    gap: 16px;
+  }
+
+  /* メニューコンテンツ */
+  .menu-content {
+    padding: 48px 20px 80px;
+  }
+
+  /* セクションヘッダー縦並び */
+  .menu-section-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .menu-section-desc {
+    margin-left: 0;
+    text-align: left;
+  }
+
+  /* セットカード：1列に */
+  .set-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* 所要時間を非表示 */
+  .menu-row-time {
+    display: none;
+  }
+
+  .menu-row-price {
+    min-width: 90px;
+    font-size: 18px;
+  }
+
+  /* フッター */
+  #footer {
+    padding: 48px 24px 24px;
+  }
+
+  .footer-top {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .footer-right {
+    text-align: left;
+  }
+
+  /* CTA */
+  .menu-cta {
+    padding: 60px 24px;
+  }
+}

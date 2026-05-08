@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="熊本の美容室、HAIR'S DRESSER。丁寧な施術でお客様に心地の良い時間を提供します。">
+
+  <!-- Google Fonts（Cormorant：英字用おしゃれフォント / Zen Kaku Gothic：日本語フォント） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+
+  <!-- Tabler Icons（アイコン用） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+  <!-- 自分のCSSファイルを読み込む -->
+  <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <title>HAIR'S DRESSER</title>
+</head>
+
+<body>
+
+ 
+  <nav id="nav">
+    <a href="#" class="nav-logo">HAIR'S DRESSER.</a>
+
+    <ul class="nav-links">
+      <li><a href="#event">EVENT</a></li>
+      <li><a href="#about">ABOUT</a></li>
+      <li><a href="menu.html">MENU</a></li>
+      <li><a href="#store">STORE</a></li>
+      <li><a href="#" class="nav-cta">お問い合わせ</a></li>
+    </ul>
+
+    <!-- ハンバーガーボタン（スマホのみ表示） -->
+    <button class="hamburger" id="hamburger" aria-label="メニューを開く">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- スマホ用フルスクリーンメニュー -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#event" onclick="closeMenu()">EVENT</a></li>
+      <li><a href="#about" onclick="closeMenu()">ABOUT</a></li>
+      <li><a href="menu.html" onclick="closeMenu()">MENU</a></li>
+      <li><a href="#store" onclick="closeMenu()">STORE</a></li>
+    </ul>
+    <a href="#" class="mobile-cta" onclick="closeMenu()">お問い合わせ</a>
+    <button class="mobile-close" onclick="closeMenu()">✕ 閉じる</button>
+  </div>
+
+
+
+  <section id="hero">
+
+    <!-- 左側：テキストエリア -->
+    <div class="hero-text">
+      <p class="hero-eyebrow">KUMAMOTO · KOSHI</p>
+      <h1 class="hero-title">
+        Hair's<br>
+        <em>Dresser.</em>
+      </h1>
+      <p class="hero-subtitle">SINCE 2026 — HAIR SALON</p>
+      <p class="hero-desc">一人ひとりのお悩みに寄り添い、丁寧なカウンセリングと施術を大切にしています。</p>
+      <a href="menu.html" class="hero-btn">
+        MENU を見る <span>→</span>
+      </a>
+    </div>
+
+    <!-- 右側：画像エリア（実際の写真に差し替えてください） -->
+    <div class="hero-img">
+        <!-- ↓ ここに <img src="photo/IMG_1366.jpg" alt="サロン外観"> を入れる -->
+          <img src="img/IMG_1366.jpg" alt="サロン外観" class="hero-main-img">
+      <!-- 右下の情報ボックス -->
+      <div class="hero-img-caption">
+        <p>
+          営業時間 10:00 – 17:30<br>
+          定休日 詳細は店舗情報に記載<br>
+          Tel: 096-201-3775
+        </p>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- =====================
+    EVENTセクション
+  ===================== -->
+  <section id="event">
+
+    <div class="event-header">
+      <div>
+        <p class="section-label">EVENT</p>
+        <h2 class="section-title">最新情報</h2>
+      </div>
+    </div>
+
+    <ul class="event-list">
+      <li class="event-item">
+        <div class="event-meta">
+          <time class="event-date" datetime="2026-02-26">2026.02.26</time>
+          <span class="event-tag">EVENT</span>
+        </div>
+        <p class="event-title">HAIR'S DRESSER リニューアルオープン</p>
+      </li>
+      <li class="event-item">
+        <div class="event-meta">
+          <time class="event-date" datetime="2026-01-14">2026.01.14</time>
+          <span class="event-tag">EVENT</span>
+        </div>
+        <p class="event-title">成人式イベント</p>
+      </li>
+      <li class="event-item">
+        <div class="event-meta">
+          <time class="event-date" datetime="2026-01-01">2026.01.01</time>
+          <span class="event-tag">EVENT</span>
+        </div>
+        <p class="event-title">ハッピーニューイヤーイベント</p>
+      </li>
+    </ul>
+
+  </section>
+
+
+  <!-- =====================
+    ABOUTセクション
+  ===================== -->
+  <section id="about">
+
+    <!-- 左側：画像エリア（実際の写真に差し替えてください） -->
+    <div class="about-img">
+        <img src="img/IMG_1365.JPG" alt="サロン内観" class="about-main-img">
+    </div>
+
+    <!-- 右側：テキストエリア -->
+    <div class="about-text">
+      <p class="section-label">ABOUT</p>
+      <h2 class="section-title">私たちに<br><em>ついて</em></h2>
+      <p class="about-body">
+        当サロンは、地域に根ざしたアットホームな美容室です。<br>
+        一人ひとりのお悩みに寄り添い、丁寧なカウンセリングと施術を大切にしています。<br><br>
+        「また来たい」と思っていただける心地よい空間づくりを心がけています。
+      </p>
+      <div class="about-accent">
+        <p>
+          📍 熊本県合志市須屋1562-5<br>
+          🕐 10:00 – 17:30 &nbsp;|&nbsp; 定休日：月曜日
+        </p>
+      </div>
+    </div>
+
+  </section>
+
+
+
+
+  <!-- =====================
+    MENUセクション
+  ===================== -->
+  <section id="menu">
+
+    <p class="section-label">MENU</p>
+    <h2 class="section-title">メニュー<em>&</em>料金</h2>
+
+    <div class="menu-grid">
+
+      <div class="menu-item">
+        <p class="menu-item-name">ヘアカット</p>
+        <p class="menu-item-price">¥3,200<span> ~</span></p>
+        <p class="menu-item-desc">丁寧なカウンセリングで<br>理想のスタイルへ</p>
+      </div>
+
+      <div class="menu-item">
+        <p class="menu-item-name">ヘアカラー</p>
+        <p class="menu-item-price">¥8,000<span> ~</span></p>
+        <p class="menu-item-desc">ご希望の色味に<br>合わせたカラーリング</p>
+      </div>
+
+      <div class="menu-item">
+        <p class="menu-item-name">ヘアブリーチ</p>
+        <p class="menu-item-price">¥8,000<span> ~</span></p>
+        <p class="menu-item-desc">プロの技術による<br>ダメージレスなブリーチ</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =====================
+    STOREセクション
+  ===================== -->
+  <section id="store">
+
+    <!-- 左側：テキスト情報 -->
+    <div class="store-info">
+      <p class="section-label">STORE</p>
+      <h2 class="section-title">店舗情報</h2>
+
+      <dl class="store-dl">
+        <div class="store-row">
+          <dt class="store-dt">店舗名</dt>
+          <dd class="store-dd">HAIR'S DRESSER</dd>
+        </div>
+        <div class="store-row">
+          <dt class="store-dt">オーナー</dt>
+          <dd class="store-dd">島村 紀子</dd>
+        </div>
+        <div class="store-row">
+          <dt class="store-dt">所在地</dt>
+          <dd class="store-dd">熊本県合志市須屋1562-5</dd>
+        </div>
+        <div class="store-row">
+          <dt class="store-dt">営業時間</dt>
+          <dd class="store-dd">10:00 – 17:30</dd>
+        </div>
+        <div class="store-row">
+          <dt class="store-dt">定休日</dt>
+          <dd class="store-dd">
+            月曜日<br>
+            日曜日（第1・3）<br>
+            火曜日（第2・4）<br>
+            <small>※第5週のある月は月火連休</small>
+          </dd>
+        </div>
+        <div class="store-row">
+          <dt class="store-dt">電話</dt>
+          <dd class="store-dd">096-201-3775</dd>
+        </div>
+      </dl>
+
+      <div class="store-badges">
+        <div class="store-badge">📍 熊本県合志市</div>
+        <div class="store-badge">🕐 10:00 – 17:30</div>
+        <div class="store-badge">📞 096-201-3775</div>
+      </div>
+    </div>
+
+    <!-- 右側：マップエリア（実際の写真やGoogleMapに差し替えてください） -->
+    <div class="store-map">
+      <i class="ti ti-map-pin"></i>
+      <p class="store-map-label">熊本県合志市須屋1562-5</p>
+      <p class="store-map-sub">Google Maps で開く →</p>
+    </div>
+
+  </section>
+
+
+  <!-- =====================
+    フッター
+  ===================== -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="footer-left">
+        <p class="footer-logo">HAIR'S DRESSER.</p>
+        <p class="footer-tagline">Koshi, Kumamoto — Hair Salon</p>
+      </div>
+      <div class="footer-right">
+        <p>
+          〒861-1102 熊本県合志市須屋1562-5<br>
+          Tel: 096-201-3775<br>
+          営業時間: 10:00 – 17:30 / 定休日: 月曜日
+        </p>
+      </div>
+    </div>
+    <p class="footer-copy">&copy; HAIR'S DRESSER. All rights reserved.</p>
+  </footer>
+
+
+  <!-- JavaScriptファイルを読み込む -->
+  <script src="js/script.js"></script>
+
+</body>
+</html>

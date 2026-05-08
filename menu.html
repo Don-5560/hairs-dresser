@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HAIR'S DRESSERのメニュー・料金表。カット・カラー・パーマ・トリートメント・ヘッドスパなど全メニュー掲載。">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+  <link rel="stylesheet" href="css/menu.css">
+
+  <title>MENU | HAIR'S DRESSER</title>
+</head>
+
+<body>
+
+  <!-- ナビゲーション -->
+  <nav id="nav">
+    <a href="index.html" class="nav-logo">HAIR'S DRESSER.</a>
+    <ul class="nav-links">
+      <li><a href="index.html#event">EVENT</a></li>
+      <li><a href="index.html#about">ABOUT</a></li>
+      <li><a href="index.html#staff">STAFF</a></li>
+      <li><a href="menu.html" class="active">MENU</a></li>
+      <li><a href="index.html#store">STORE</a></li>
+      <li><a href="#" class="nav-cta">お問い合わせ</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="メニューを開く">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- スマホ用フルスクリーンメニュー -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="index.html#event" onclick="closeMenu()">EVENT</a></li>
+      <li><a href="index.html#about" onclick="closeMenu()">ABOUT</a></li>
+      <li><a href="index.html#staff" onclick="closeMenu()">STAFF</a></li>
+      <li><a href="menu.html" onclick="closeMenu()">MENU</a></li>
+      <li><a href="index.html#store" onclick="closeMenu()">STORE</a></li>
+    </ul>
+    <a href="#" class="mobile-cta" onclick="closeMenu()">お問い合わせ</a>
+    <button class="mobile-close" onclick="closeMenu()">✕ 閉じる</button>
+  </div>
+
+
+  <!-- ページヒーロー -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="page-hero-label">HAIR'S DRESSER</p>
+      <h1 class="page-hero-title">Menu &amp; <em>Price</em></h1>
+      <p class="page-hero-desc">
+        すべての価格は税込表示です。ロング料金別途あり。<br>
+        初回ご来店の方限定クーポンもご用意しております。
+      </p>
+    </div>
+  </section>
+
+
+  <!-- 注意書き帯 -->
+  <div class="notice-bar">
+    <span><i class="ti ti-info-circle"></i> 価格はすべて税込</span>
+    <span><i class="ti ti-scissors"></i> シャンプー・ブロー込み</span>
+    <span><i class="ti ti-ruler"></i> 肩下ロング料金 +¥550〜</span>
+    <span><i class="ti ti-clock"></i> パーマ・カラーの最終受付 16:30</span>
+  </div>
+
+
+  <!-- メニュー本体 -->
+  <div class="menu-content">
+
+    <!-- カテゴリーナビ -->
+    <div class="category-nav">
+      <button class="cat-btn active" onclick="scrollToSection('cut')">カット</button>
+      <button class="cat-btn" onclick="scrollToSection('color')">カラー</button>
+      <button class="cat-btn" onclick="scrollToSection('perm')">パーマ</button>
+      <button class="cat-btn" onclick="scrollToSection('treatment')">トリートメント</button>
+      <button class="cat-btn" onclick="scrollToSection('spa')">ヘッドスパ</button>
+      <button class="cat-btn" onclick="scrollToSection('set')">セットメニュー</button>
+    </div>
+
+
+    <!-- ① カット -->
+    <section class="menu-section" id="cut">
+      <div class="menu-section-header">
+        <span class="menu-section-num">01</span>
+        <h2 class="menu-section-title">Cut <em>カット</em></h2>
+        <p class="menu-section-desc">骨格に合わせた似合わせカット<br>伸びても崩れないスタイルへ</p>
+      </div>
+      <ul class="menu-list">
+        <li class="menu-row">
+          <div class="menu-row-name">
+            カット（シャンプー・ブロー込み）
+            <small>カウンセリング付き / スタイリングレクチャーあり</small>
+          </div>
+          <span class="menu-row-time">60 min</span>
+          <div class="menu-row-price">¥3,200<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            前髪カット
+            <small>セットのみ / シャンプーなし</small>
+          </div>
+          <span class="menu-row-time">15 min</span>
+          <div class="menu-row-price">¥550<span>〜</span></div>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- ② カラー -->
+    <section class="menu-section" id="color">
+      <div class="menu-section-header">
+        <span class="menu-section-num">02</span>
+        <h2 class="menu-section-title">Color <em>カラー</em></h2>
+        <p class="menu-section-desc">髪と頭皮を守る最高峰のケアカラー<br>染めるたびに美しい艶髪へ</p>
+      </div>
+      <ul class="menu-list">
+        <li class="menu-row">
+          <div class="menu-row-name">
+            フルカラー
+            <small>シャンプー・ブロー込み</small>
+          </div>
+          <span class="menu-row-time">90 min</span>
+          <div class="menu-row-price">¥8,000<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            高濃度水素カラー
+            <small>酸化ダメージを中和・潤い・ツヤ・弾力をプラス</small>
+          </div>
+          <span class="menu-row-badge popular">人気</span>
+          <span class="menu-row-time">90 min</span>
+          <div class="menu-row-price">¥12,000<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            リタッチカラー（根元のみ）
+            <small>シャンプー・ブロー込み</small>
+          </div>
+          <span class="menu-row-time">75 min</span>
+          <div class="menu-row-price">¥6,500<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            ブリーチ
+            <small>ダメージケア薬剤使用</small>
+          </div>
+          <span class="menu-row-time">120 min</span>
+          <div class="menu-row-price">¥8,000<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            白髪染め（フル）
+            <small>シャンプー・ブロー込み</small>
+          </div>
+          <span class="menu-row-time">90 min</span>
+          <div class="menu-row-price">¥8,000<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            白髪染め（リタッチ）
+          </div>
+          <span class="menu-row-time">75 min</span>
+          <div class="menu-row-price">¥6,500<span>〜</span></div>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- ③ パーマ -->
+    <section class="menu-section" id="perm">
+      <div class="menu-section-header">
+        <span class="menu-section-num">03</span>
+        <h2 class="menu-section-title">Perm <em>パーマ</em></h2>
+        <p class="menu-section-desc">ふんわり・しっかり<br>ご希望のウェーブへ</p>
+      </div>
+      <ul class="menu-list">
+        <li class="menu-row">
+          <div class="menu-row-name">
+            パーマ
+            <small>シャンプー・ブロー込み</small>
+          </div>
+          <span class="menu-row-time">120 min</span>
+          <div class="menu-row-price">¥8,000<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            縮毛矯正
+            <small>シャンプー・ブロー込み / くせ毛・うねりのお悩みに</small>
+          </div>
+          <span class="menu-row-time">180 min</span>
+          <div class="menu-row-price">¥16,000<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            髪質改善（カット込み）
+            <small>縮毛矯正まではしなくてもいい方に / 乾かすだけでまとまる艶髪へ</small>
+          </div>
+          <span class="menu-row-badge popular">人気</span>
+          <span class="menu-row-time">150 min</span>
+          <div class="menu-row-price">¥20,900<span>〜</span></div>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- ④ トリートメント -->
+    <section class="menu-section" id="treatment">
+      <div class="menu-section-header">
+        <span class="menu-section-num">04</span>
+        <h2 class="menu-section-title">Treatment <em>トリートメント</em></h2>
+        <p class="menu-section-desc">うるツヤになれる厳選トリートメント<br>パサつき・ダメージをしっかりケア</p>
+      </div>
+      <ul class="menu-list">
+        <li class="menu-row">
+          <div class="menu-row-name">
+            補修トリートメント
+            <small>内側から栄養を補いツヤ・まとまりをキープ</small>
+          </div>
+          <span class="menu-row-time">30 min</span>
+          <div class="menu-row-price">¥2,750<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            ヘアエステ
+            <small>スチーマーでトリートメント成分をぐんぐん浸透。ツヤ・潤いを実感</small>
+          </div>
+          <span class="menu-row-badge">おすすめ</span>
+          <span class="menu-row-time">40 min</span>
+          <div class="menu-row-price">¥3,850<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            スペシャルヘアエステ
+            <small>極上3ステップ。潤いとツヤを3〜4週間キープ</small>
+          </div>
+          <span class="menu-row-badge popular">人気</span>
+          <span class="menu-row-time">50 min</span>
+          <div class="menu-row-price">¥5,500<span>〜</span></div>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- ⑤ ヘッドスパ -->
+    <section class="menu-section" id="spa">
+      <div class="menu-section-header">
+        <span class="menu-section-num">05</span>
+        <h2 class="menu-section-title">Head Spa <em>ヘッドスパ</em></h2>
+        <p class="menu-section-desc">頭〜肩までのマッサージサービス<br>育毛・頭皮ケアに</p>
+      </div>
+      <ul class="menu-list">
+        <li class="menu-row">
+          <div class="menu-row-name">
+            オイルクレンジング
+            <small>頭皮の汚れをやさしく落とし、うるおいを整える</small>
+          </div>
+          <span class="menu-row-time">20 min</span>
+          <div class="menu-row-price">¥1,650<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            炭酸デトックスヘッドスパ（40分）
+            <small>炭酸シャンプー＆トリートメント。毛穴の汚れを落とし潤いと栄養を与える</small>
+          </div>
+          <span class="menu-row-badge popular">人気</span>
+          <span class="menu-row-time">40 min</span>
+          <div class="menu-row-price">¥5,500<span>〜</span></div>
+        </li>
+        <li class="menu-row">
+          <div class="menu-row-name">
+            新感覚エイジングスパ
+            <small>ヘッドスパ＋ヘアエステのW効果。育毛促進・デトックス◎</small>
+          </div>
+          <span class="menu-row-badge">おすすめ</span>
+          <span class="menu-row-time">60 min</span>
+          <div class="menu-row-price">¥8,250<span>〜</span></div>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- ⑥ セットメニュー -->
+    <section class="menu-section" id="set">
+      <div class="menu-section-header">
+        <span class="menu-section-num">06</span>
+        <h2 class="menu-section-title">Set Menu <em>セット</em></h2>
+        <p class="menu-section-desc">初回ご来店の方限定クーポンあり<br>お得なセットでぜひご体験ください</p>
+      </div>
+
+      <div class="set-grid">
+
+        <div class="set-card">
+          <span class="set-card-badge new">新規限定</span>
+          <p class="set-card-name">補修トリートメント<br>+ カット + カラー</p>
+          <p class="set-card-detail">シャンプー・ブロー込み<br>※ロング料金：肩下 +¥550〜<br>ダメージでパサついた髪に内側から<br>栄養を補いツヤとまとまりをキープ</p>
+          <div class="set-card-price-wrap">
+            <span class="set-card-price-old">¥12,650</span>
+            <span class="set-card-price-new">¥11,380</span>
+          </div>
+          <p class="set-card-price-note">税込 / 初回限定</p>
+        </div>
+
+        <div class="set-card featured">
+          <span class="set-card-badge new">新規限定</span>
+          <p class="set-card-name">スペシャルヘアエステ<br>+ カット + カラー</p>
+          <p class="set-card-detail">シャンプー・ブロー込み<br>※ロング料金：肩下 +¥550〜<br>3ステップで潤い・ツヤを<br>3〜4週間キープ</p>
+          <div class="set-card-price-wrap">
+            <span class="set-card-price-old">¥14,300</span>
+            <span class="set-card-price-new">¥12,870</span>
+          </div>
+          <p class="set-card-price-note">税込 / 初回限定</p>
+        </div>
+
+        <div class="set-card">
+          <span class="set-card-badge new">新規限定</span>
+          <p class="set-card-name">高濃度水素カラー<br>+ トリートメント + カット</p>
+          <p class="set-card-detail">シャンプー・ブロー込み<br>※ロング料金：肩下 +¥550〜<br>最高峰のケアカラーで<br>染めるたびに美しい艶髪へ</p>
+          <div class="set-card-price-wrap">
+            <span class="set-card-price-old">¥16,500</span>
+            <span class="set-card-price-new">¥14,850</span>
+          </div>
+          <p class="set-card-price-note">税込 / 全員対象</p>
+        </div>
+
+        <div class="set-card">
+          <span class="set-card-badge new">新規限定</span>
+          <p class="set-card-name">オイルクレンジング<br>+ カット</p>
+          <p class="set-card-detail">シャンプー・ブロー込み<br>※ロング料金：肩下 +¥550〜<br>頭皮ケアとカットを<br>セットでお得に</p>
+          <div class="set-card-price-wrap">
+            <span class="set-card-price-old">¥6,050</span>
+            <span class="set-card-price-new">¥5,440</span>
+          </div>
+          <p class="set-card-price-note">税込 / 初回限定</p>
+        </div>
+
+        <div class="set-card">
+          <span class="set-card-badge new">新規限定</span>
+          <p class="set-card-name">炭酸デトックスSPA（40分）<br>+ カット</p>
+          <p class="set-card-detail">シャンプー・ブロー込み<br>※ロング料金：肩下 +¥550〜<br>頭皮すっきり＆<br>骨格カットのセット</p>
+          <div class="set-card-price-wrap">
+            <span class="set-card-price-old">¥8,250</span>
+            <span class="set-card-price-new">¥7,420</span>
+          </div>
+          <p class="set-card-price-note">税込 / 初回限定</p>
+        </div>
+
+        <div class="set-card">
+          <span class="set-card-badge new">新規限定</span>
+          <p class="set-card-name">カット + パーマ<br>+ 補修トリートメント</p>
+          <p class="set-card-detail">シャンプー・ブロー込み<br>※ロング料金：肩下 +¥550〜<br>パーマ後のダメージを<br>補修トリートメントでケア</p>
+          <div class="set-card-price-wrap">
+            <span class="set-card-price-old">¥13,200</span>
+            <span class="set-card-price-new">¥11,880</span>
+          </div>
+          <p class="set-card-price-note">税込 / 初回限定</p>
+        </div>
+
+      </div>
+
+      <div class="price-note-box">
+        <p>
+          ※ 掲載価格はすべて税込です。<br>
+          ※ ロング料金：肩下 +¥550〜（長さにより異なります）<br>
+          ※ 新規限定クーポンは初めてご来店のお客様のみ対象となります。<br>
+          ※ 平日限定クーポンあり：カットのみ以外のメニュー10%オフ（新規の方）<br>
+          ※ マツエクメニューもございます。詳しくはお問い合わせください。
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+
+  <!-- CTA -->
+  <section class="menu-cta">
+    <h2 class="menu-cta-title">ご予約・<em>お問い合わせ</em></h2>
+    <p class="menu-cta-desc">
+      お気軽にご相談ください。カウンセリングで最適なメニューをご提案します。<br>
+      ホットペッパービューティーからのご予約も承っております。
+    </p>
+    <a href="tel:096-201-3775" class="menu-cta-btn">
+      📞 096-201-3775 <span>→</span>
+    </a>
+  </section>
+
+
+  <!-- フッター -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="footer-left">
+        <p class="footer-logo">HAIR'S DRESSER.</p>
+        <p class="footer-tagline">Koshi, Kumamoto — Hair Salon</p>
+      </div>
+      <div class="footer-right">
+        <p>
+          〒861-1102 熊本県合志市須屋1562-5<br>
+          Tel: 096-201-3775<br>
+          営業時間: 10:00 – 17:30 / 定休日: 月曜日
+        </p>
+      </div>
+    </div>
+    <p class="footer-copy">&copy; HAIR'S DRESSER. All rights reserved.</p>
+  </footer>
+
+  <script src="js/menu.js"></script>
+
+</body>
+</html>

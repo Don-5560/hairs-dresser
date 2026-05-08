@@ -1,0 +1,1000 @@
+@charset "UTF-8";
+
+/* =====================
+  CSS変数（色・フォントをまとめて管理）
+  ここを変えるだけでサイト全体の色が変わる
+===================== */
+:root {
+  --blue: #A8CADD;          /* メインのライトブルー */
+  --blue-dark: #6A9BB5;     /* 濃いブルー（ボタン・アクセント） */
+  --blue-light: #D8EAF4;    /* 薄いブルー（背景など） */
+  --blue-pale: #EFF6FB;     /* 極薄ブルー（ホバー背景） */
+  --black: #1a1a1a;         /* テキスト色 */
+  --gray: #6b6b6b;          /* サブテキスト色 */
+  --bg: #f7f5f2;            /* ページ背景 */
+  --white: #ffffff;
+}
+
+
+/* =====================
+  リセット・共通設定
+===================== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* paddingをwidthの内側に含める */
+}
+
+html {
+  scroll-behavior: smooth; /* アンカーリンクでスムーズスクロール */
+}
+
+body {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  background-color: var(--bg);
+  color: var(--black);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+img {
+  max-width: 100%;
+  vertical-align: bottom; /* 画像下の隙間をなくす */
+}
+
+a {
+  text-decoration: none;
+  color: var(--black);
+}
+
+li {
+  list-style: none;
+}
+
+
+/* =====================
+  共通クラス（セクションタイトル）
+===================== */
+
+/* タイトル上の小さい英字ラベル */
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--blue-dark);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ラベルの左に短い横線を追加 */
+.section-label::before {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background-color: var(--blue-dark);
+  display: block;
+}
+
+/* セクションの大見出し */
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 4vw, 52px); /* 画面幅に合わせて自動調整 */
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+/* タイトル内の斜体部分（em要素） */
+.section-title em {
+  font-style: italic;
+  color: var(--black);
+}
+
+
+
+/* =====================
+  ナビゲーション
+===================== */
+#nav {
+  position: fixed;        /* 画面上部に固定 */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;           /* 他の要素より前面に表示 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 72px;
+  background-color: rgba(247, 245, 242, 0.95);
+  backdrop-filter: blur(12px); /* 背景をぼかすすりガラス効果 */
+  border-bottom: 1px solid rgba(168, 202, 221, 0.3);
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  color: var(--black);
+  z-index: 200; /* モバイルメニューより前に表示 */
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+}
+
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--gray);
+  transition: color 0.2s; /* ホバー時に色が変わるアニメーション */
+}
+
+.nav-links a:hover {
+  color: var(--blue-dark);
+}
+
+/* お問い合わせボタン */
+.nav-cta {
+  background-color: var(--blue-dark);
+  color: var(--white) !important; /* aタグの色を上書き */
+  padding: 10px 24px;
+  border-radius: 2px;
+}
+
+.nav-cta:hover {
+  background-color: var(--blue) !important;
+  color: var(--black) !important;
+}
+
+
+
+/* =====================
+  ハンバーガーボタン（スマホ用）
+===================== */
+.hamburger {
+  display: none; /* PCでは非表示 */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 200;
+}
+
+/* ハンバーガーの3本線 */
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background-color: var(--black);
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+/* 開いたとき：上の線を斜め45度に */
+.hamburger.open span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+
+/* 開いたとき：中の線を消す */
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+/* 開いたとき：下の線を斜め-45度に */
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+
+
+/* =====================
+  モバイルメニュー（スマホ用フルスクリーン）
+===================== */
+.mobile-menu {
+  display: none; /* 最初は非表示 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(247, 245, 242, 0.98);
+  backdrop-filter: blur(16px);
+  z-index: 150;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* openクラスが付いたとき表示 */
+.mobile-menu.open {
+  display: flex;
+  opacity: 1;
+}
+
+.mobile-menu ul {
+  text-align: center;
+  width: 100%;
+}
+
+.mobile-menu ul li {
+  border-bottom: 1px solid rgba(168, 202, 221, 0.3);
+}
+
+.mobile-menu ul li:first-child {
+  border-top: 1px solid rgba(168, 202, 221, 0.3);
+}
+
+.mobile-menu ul li a {
+  display: block;
+  padding: 24px 60px;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--gray);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.mobile-menu ul li a:hover {
+  color: var(--blue-dark);
+  background-color: var(--blue-pale);
+}
+
+.mobile-cta {
+  margin-top: 32px;
+  background-color: var(--blue-dark);
+  color: var(--white);
+  padding: 16px 48px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  border-radius: 2px;
+}
+
+.mobile-close {
+  margin-top: 24px;
+  background: none;
+  border: 1px solid rgba(168, 202, 221, 0.5);
+  color: var(--gray);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  padding: 12px 40px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.mobile-close:hover {
+  background-color: var(--blue-pale);
+  color: var(--blue-dark);
+}
+
+
+
+/* =====================
+  ヒーロー（メインビジュアル）
+===================== */
+#hero {
+  min-height: 100vh;
+  display: flex; /* 左右に分割 */
+  padding-top: 72px; /* ナビの高さ分下げる */
+}
+
+/* 左側：テキストエリア */
+.hero-text {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 60px 60px 80px;
+  background-color: var(--bg);
+}
+
+/* KUMAMOTO · KOSHIのラベル */
+.hero-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: var(--blue-dark);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ラベルの左の横線 */
+.hero-eyebrow::before {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background-color: var(--blue-dark);
+}
+
+/* メインタイトル */
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(48px, 6vw, 80px);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: 0.25em;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--black);
+}
+
+.hero-subtitle {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--gray);
+  margin-bottom: 48px;
+}
+
+.hero-desc {
+  font-size: 13px;
+  line-height: 2.2;
+  color: var(--gray);
+  max-width: 320px;
+  margin-bottom: 48px;
+}
+
+/* MENUを見るボタン */
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--blue-dark);
+  color: var(--white);
+  padding: 16px 36px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  border-radius: 2px;
+  width: fit-content;
+  transition: all 0.25s;
+}
+
+.hero-btn:hover {
+  background-color: var(--blue);
+  color: var(--black);
+  gap: 24px; /* 矢印が右にスライドする効果 */
+}
+
+/* 右側：画像エリア */
+
+.hero-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 比率を保ちながら全体を埋める */
+}
+
+.hero-img {
+  width: 50%;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--blue-light);
+}
+
+/* .hero-img-inner {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  background: linear-gradient(135deg, var(--blue-light) 0%, var(--blue) 60%, var(--blue-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+} */
+
+/* 写真がないときに表示するプレースホルダー */
+/* .hero-img-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: var(--white);
+  opacity: 0.8;
+} */
+
+.hero-img-label {
+  color: var(--white);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  opacity: 0.8;
+}
+
+/* 右下の情報ボックス */
+.hero-img-caption {
+  position: absolute;
+  bottom: 32px;
+  left: 32px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 14px 20px;
+  border-radius: 4px;
+  color: var(--white);
+}
+
+.hero-img-caption p {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+}
+
+
+
+/* =====================
+  EVENTセクション
+===================== */
+#event {
+  padding: 100px 80px;
+  background-color: var(--white);
+}
+
+.event-header {
+  margin-bottom: 56px;
+}
+
+.event-list {
+  /* listはulなのでlist-styleをリセット（共通で設定済み） */
+}
+
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(168, 202, 221, 0.4);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.event-item:first-child {
+  border-top: 1px solid rgba(168, 202, 221, 0.4);
+}
+
+.event-item:hover {
+  background-color: var(--blue-pale);
+  padding-left: 12px;
+  padding-right: 12px;
+  margin: 0 -12px;
+}
+
+.event-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px; /* 日付エリアの最小幅を固定 */
+}
+
+.event-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  color: var(--gray);
+}
+
+/* EVENTタグ */
+.event-tag {
+  display: inline-block;
+  background-color: var(--blue-light);
+  color: var(--blue-dark);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  padding: 4px 10px;
+  width: fit-content;
+  border-radius: 2px;
+}
+
+.event-title {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+}
+
+
+/* =====================
+  ABOUTセクション
+===================== */
+#about {
+  display: flex; /* 左右に分割 */
+  min-height: 500px;
+}
+
+/* 左側：画像エリア */
+.about-img {
+  width: 55%;
+  background: linear-gradient(160deg, var(--blue-light) 0%, var(--blue) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.about-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-img-inner {
+  text-align: center;
+  color: var(--white);
+}
+
+.about-img-icon {
+  font-size: 64px;
+  opacity: 0.5;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.about-img-text {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+}
+
+/* 右側：テキストエリア */
+.about-text {
+  width: 45%;
+  padding: 80px 80px 80px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--bg);
+}
+
+.about-body {
+  font-size: 14px;
+  line-height: 2.4;
+  color: var(--gray);
+  margin-top: 32px;
+}
+
+/* 住所・営業時間のアクセントボックス */
+.about-accent {
+  margin-top: 40px;
+  padding: 24px 28px;
+  background-color: var(--blue-pale);
+  border-left: 3px solid var(--blue-dark); /* 左側に太いボーダー */
+  border-radius: 0 4px 4px 0;
+}
+
+.about-accent p {
+  font-size: 12px;
+  color: var(--blue-dark);
+  letter-spacing: 0.05em;
+  line-height: 2;
+}
+
+
+/* =====================
+  STAFFセクション
+===================== */
+#staff {
+  padding: 100px 80px;
+  background-color: var(--white);
+}
+
+.staff-header {
+  margin-bottom: 64px;
+}
+
+/* 4列グリッド */
+.staff-grid {
+  display: flex;
+  gap: 24px;
+}
+
+.staff-card {
+  flex: 1; /* 4枚が均等に並ぶ */
+  background-color: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 0.25s;
+}
+
+.staff-card:hover {
+  transform: translateY(-4px); /* ホバーで少し上に浮く */
+}
+
+/* スタッフ写真エリア */
+.staff-card-img {
+  height: 200px;
+  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  color: var(--white);
+  opacity: 0.8;
+}
+
+/* 色違いのカード */
+.staff-card-offset {
+  background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+}
+
+.staff-card-info {
+  padding: 20px 16px;
+}
+
+.staff-name {
+  font-size: 14px;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+
+.staff-years {
+  font-size: 11px;
+  color: var(--blue-dark);
+  letter-spacing: 0.1em;
+}
+
+/* OWNER / STYLISTバッジ */
+.staff-role {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--white);
+  background-color: var(--blue-dark);
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+
+
+/* =====================
+  MENUセクション（背景が濃いブルー）
+===================== */
+#menu {
+  padding: 100px 80px;
+  background-color: var(--blue-dark);
+}
+
+/* 背景が濃い色なので、ラベル・タイトルを白系に変更 */
+#menu .section-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+#menu .section-label::before {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+#menu .section-title {
+  color: var(--white);
+}
+
+#menu .section-title em {
+  color: var(--blue-light);
+}
+
+/* 3列グリッド */
+.menu-grid {
+  display: flex;
+  gap: 2px;
+  margin-top: 56px;
+}
+
+.menu-item {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 36px 32px;
+  border-radius: 2px;
+  transition: background-color 0.2s;
+}
+
+.menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.menu-item-name {
+  font-size: 16px;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+/* 料金（大きいフォント） */
+.menu-item-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--blue-light);
+}
+
+.menu-item-price span {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.menu-item-desc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 10px;
+  line-height: 1.9;
+}
+
+
+/* =====================
+  STOREセクション
+===================== */
+#store {
+  padding: 100px 80px;
+  background-color: var(--bg);
+  display: flex;
+  gap: 80px;
+  align-items: center;
+}
+
+.store-info {
+  flex: 1;
+}
+
+/* dl要素のスタイル（dtとddを横並びに） */
+.store-dl {
+  margin-top: 40px;
+}
+
+.store-row {
+  display: flex;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(168, 202, 221, 0.3);
+  font-size: 13px;
+}
+
+.store-row:first-child {
+  border-top: 1px solid rgba(168, 202, 221, 0.3);
+}
+
+.store-dt {
+  width: 100px;
+  flex-shrink: 0; /* 幅を縮めない */
+  color: var(--gray);
+  letter-spacing: 0.05em;
+}
+
+.store-dd {
+  color: var(--black);
+}
+
+/* バッジ（住所・時間・電話） */
+.store-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+
+.store-badge {
+  background-color: var(--white);
+  border: 1px solid rgba(168, 202, 221, 0.5);
+  padding: 10px 16px;
+  border-radius: 2px;
+  font-size: 11px;
+  color: var(--gray);
+}
+
+/* マップエリア */
+.store-map {
+  flex: 1;
+  background-color: var(--blue-light);
+  border-radius: 4px;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.store-map .ti-map-pin {
+  font-size: 48px;
+  color: var(--blue-dark);
+  opacity: 0.6;
+}
+
+.store-map-label {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  color: var(--blue-dark);
+}
+
+.store-map-sub {
+  font-size: 11px;
+  color: var(--blue-dark);
+  opacity: 0.5;
+  letter-spacing: 0.1em;
+}
+
+
+/* =====================
+  フッター
+===================== */
+#footer {
+  background-color: var(--black);
+  padding: 64px 80px 32px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 32px;
+}
+
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+
+.footer-tagline {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footer-right {
+  text-align: right;
+}
+
+.footer-right p {
+  font-size: 12px;
+  line-height: 2.2;
+}
+
+.footer-copy {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+
+/* =====================
+  レスポンシブ対応（スマホ：768px以下）
+===================== */
+@media screen and (max-width: 768px) {
+
+  /* ナビ：スマホではPCリンクを隠してハンバーガーを表示 */
+  #nav {
+    padding: 0 20px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  /* ヒーロー：縦並びに変更 */
+  #hero {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .hero-text {
+    width: 100%;
+    padding: 48px 24px;
+    order: 2; /* テキストを下に */
+  }
+
+  .hero-img {
+    width: 100%;
+    order: 1; /* 画像を上に */
+    min-height: 280px;
+  }
+
+  .hero-img-inner {
+    min-height: 280px;
+  }
+
+  .hero-img-caption {
+    bottom: 16px;
+    left: 16px;
+  }
+
+  /* EVENT：スマホでは縦並び */
+  #event {
+    padding: 64px 24px;
+  }
+
+  .event-item {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start; /* 左寄せ */
+  }
+
+  .event-meta {
+    min-width: unset; /* PCで設定した最小幅をリセット */
+  }
+
+  /* ABOUT：縦並びに変更 */
+  #about {
+    flex-direction: column;
+  }
+
+  .about-img {
+    width: 100%;
+    min-height: 240px;
+  }
+
+  .about-text {
+    width: 100%;
+    padding: 48px 24px;
+  }
+
+  /* STAFF：2列に変更（4列→2列） */
+  #staff {
+    padding: 64px 24px;
+  }
+
+  .staff-grid {
+    flex-wrap: wrap;
+  }
+
+  .staff-card {
+    flex: 0 0 calc(50% - 12px); /* 2列 */
+  }
+
+  /* MENU：縦並びに変更 */
+  #menu {
+    padding: 64px 24px;
+  }
+
+  .menu-grid {
+    flex-direction: column;
+  }
+
+  /* STORE：縦並びに変更 */
+  #store {
+    padding: 64px 24px;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .store-map {
+    width: 100%;
+    height: 240px;
+  }
+
+  /* フッター：縦並びに変更 */
+  #footer {
+    padding: 48px 24px 24px;
+  }
+
+  .footer-top {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .footer-right {
+    text-align: left;
+  }
+
+}

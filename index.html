@@ -31,6 +31,7 @@
       <li><a href="#about">ABOUT</a></li>
       <li><a href="menu.html">MENU</a></li>
       <li><a href="#store">STORE</a></li>
+      <li><a href="https://beauty.hotpepper.jp/slnH000418167/" target="_blank" class="nav-hotpepper">hotpepper beauty</a></li>
       <li><a href="#" class="nav-cta">お問い合わせ</a></li>
     </ul>
 
@@ -50,6 +51,7 @@
       <li><a href="menu.html" onclick="closeMenu()">MENU</a></li>
       <li><a href="#store" onclick="closeMenu()">STORE</a></li>
     </ul>
+    <a href="https://beauty.hotpepper.jp/slnH000418167/" target="_blank" class="mobile-cta">ネット予約</a>
     <a href="#" class="mobile-cta" onclick="closeMenu()">お問い合わせ</a>
     <button class="mobile-close" onclick="closeMenu()">✕ 閉じる</button>
   </div>
@@ -199,18 +201,27 @@
         </div>
         <div class="store-row">
           <dt class="store-dt">定休日</dt>
-          <dd class="store-dd">
-            月曜日<br>
-            日曜日（第1・3）<br>
-            火曜日（第2・4）<br>
-            <small>※第5週のある月は月火連休</small>
-          </dd>
+          <dd class="store-dd">下記カレンダーをご参照ください</dd>
         </div>
         <div class="store-row">
           <dt class="store-dt">電話</dt>
           <dd class="store-dd">096-201-3775</dd>
         </div>
       </dl>
+
+      <!-- 定休日カレンダー -->
+      <div class="store-calendar">
+        <div class="cal-nav">
+          <button class="cal-btn" id="cal-prev">←</button>
+          <p class="cal-title" id="cal-title"></p>
+          <button class="cal-btn" id="cal-next">→</button>
+        </div>
+        <div class="cal-header">
+          <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legend"><span class="cal-closed-dot"></span>定休日</div>
+      </div>
 
       <div class="store-badges">
         <div class="store-badge">📍 熊本県合志市</div>
@@ -243,6 +254,9 @@
           営業時間: 10:00 – 17:30 / 定休日: 月曜日
         </p>
       </div>
+    </div>
+    <div style="text-align:center; margin-bottom: 16px;">
+      <a href="https://beauty.hotpepper.jp/slnH000418167/" target="_blank" style="font-size:11px; letter-spacing:0.1em; color:rgba(255,255,255,0.5);">ホットペッパービューティーでネット予約 →</a>
     </div>
     <p class="footer-copy">&copy; HAIR'S DRESSER. All rights reserved.</p>
   </footer>

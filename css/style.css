@@ -138,6 +138,19 @@ li {
   color: var(--blue-dark);
 }
 
+/* ネット予約ボタン（ホットペッパーカラー） */
+.nav-hotpepper {
+  background-color: #E2351A;
+  color: var(--white) !important;
+  padding: 10px 24px;
+  border-radius: 2px;
+}
+
+.nav-hotpepper:hover {
+  background-color: #c42d16 !important;
+  color: var(--white) !important;
+}
+
 /* お問い合わせボタン */
 .nav-cta {
   background-color: var(--blue-dark);
@@ -819,6 +832,104 @@ li {
   color: var(--blue-dark);
   opacity: 0.5;
   letter-spacing: 0.1em;
+}
+
+/* =====================
+  定休日カレンダー
+===================== */
+.store-calendar {
+  margin-top: 40px;
+  background-color: var(--white);
+  border-radius: 4px;
+  padding: 20px;
+  border: 1px solid rgba(168, 202, 221, 0.3);
+}
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  color: var(--black);
+}
+
+.cal-btn {
+  background: none;
+  border: 1px solid rgba(168, 202, 221, 0.5);
+  color: var(--gray);
+  width: 28px;
+  height: 28px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.cal-btn:hover {
+  background-color: var(--blue-pale);
+}
+
+.cal-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--gray);
+  margin-bottom: 8px;
+}
+
+.cal-header div:first-child { color: #c0392b; }
+.cal-header div:last-child  { color: var(--blue-dark); }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-cell {
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  border-radius: 2px;
+  color: var(--black);
+}
+
+.cal-cell.cal-sun { color: #c0392b; }
+.cal-cell.cal-sat { color: var(--blue-dark); }
+
+.cal-cell.cal-closed {
+  background-color: var(--blue-light);
+  color: var(--blue-dark);
+  font-weight: 400;
+}
+
+.cal-cell.cal-today {
+  border: 1px solid var(--blue-dark);
+}
+
+.cal-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 10px;
+  color: var(--gray);
+  letter-spacing: 0.05em;
+}
+
+.cal-closed-dot {
+  width: 10px;
+  height: 10px;
+  background-color: var(--blue-light);
+  border-radius: 2px;
+  display: inline-block;
 }
 
 .store-map-link {

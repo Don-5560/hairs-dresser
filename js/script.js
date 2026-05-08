@@ -46,7 +46,7 @@ async function loadEvents() {
 
   try {
     const res = await fetch('https://zjf3r5fchx.microcms.io/api/v1/events?orders=-date', {
-      headers: { 'X-MICROCMS-API-KEY': 'vUCco7aGEoT99Og7rLtsUBhL9JKY9C3WvIm5' }
+      headers: { 'X-MICROCMS-API-KEY': 'y5YS0lD3Y97Bj8iwQ1cECeGjOeYpqX1UCmbn' }
     });
     const data = await res.json();
 

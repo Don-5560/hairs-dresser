@@ -795,14 +795,11 @@ li {
 /* マップエリア */
 .store-map {
   flex: 1;
-  background-color: var(--blue-light);
   border-radius: 4px;
   height: 380px;
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
-  gap: 16px;
 }
 
 .store-map .ti-map-pin {
@@ -822,6 +819,17 @@ li {
   color: var(--blue-dark);
   opacity: 0.5;
   letter-spacing: 0.1em;
+}
+
+.store-map-link {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--blue-dark);
+  background-color: var(--white);
+  border-top: 1px solid rgba(168, 202, 221, 0.3);
 }
 
 

@@ -35,7 +35,6 @@ hamburger.addEventListener('click', function() {
   }
 });
 
-// HTMLのonclickから呼べるようにグローバルに公開
 function closeMenu() {
   mobileMenu.classList.remove('open');
   hamburger.classList.remove('open');
@@ -62,7 +61,6 @@ async function loadNews() {
 
     list.innerHTML = snap.docs.map(doc => {
       const d = doc.data();
-      // YYYY-MM-DD 形式の日付を表示用に変換
       const parts = d.date.split('-');
       const formatted = parts.length === 3
         ? `${parts[0]}.${parts[1]}.${parts[2]}`
@@ -86,12 +84,37 @@ loadNews();
 
 
 /* =====================
+  Firestore からトップページメニューを読み込む
+===================== */
+async function loadTopMenu() {
+  const grid = document.getElementById('top-menu-grid');
+  if (!grid) return;
+
+  try {
+    const snap = await getDocs(collection(db, 'top_menu'));
+    if (snap.empty) return; // データなければ初期HTML表示のまま
+
+    const items = [];
+    snap.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+    items.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    grid.innerHTML = items.map(item => `
+      <div class="menu-item">
+        <p class="menu-item-name">${item.name}</p>
+        <p class="menu-item-price">${item.price}</p>
+        <p class="menu-item-desc">${(item.desc || '').replace(/\n/g, '<br>')}</p>
+      </div>`).join('');
+
+  } catch (e) {
+    console.error('トップメニューの取得に失敗しました', e);
+  }
+}
+
+loadTopMenu();
+
+
+/* =====================
   定休日カレンダー
-  定休日ルール：
-  - 毎週月曜
-  - 第1・第3日曜
-  - 第2・第4火曜
-  - 第5週がある月は5回目の月・火も休み
 ===================== */
 (function () {
   const today = new Date();

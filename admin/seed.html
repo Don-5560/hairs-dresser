@@ -38,6 +38,13 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  // ===== トップページメニュー =====
+  const topMenuData = [
+    { name: 'ヘアカット', price: '¥3,200〜', desc: '丁寧なカウンセリングで\n理想のスタイルへ', order: 1 },
+    { name: 'ヘアカラー', price: '¥8,000〜', desc: 'ご希望の色味に\n合わせたカラーリング', order: 2 },
+    { name: 'ヘアブリーチ', price: '¥8,000〜', desc: 'プロの技術による\nダメージレスなブリーチ', order: 3 },
+  ];
+
   // ===== メニューデータ（menu.htmlより） =====
   const menuData = [
     // カット
@@ -92,6 +99,13 @@
       addLog('ログイン中...');
       await signInWithEmailAndPassword(auth, email, pass);
       addLog('✓ ログイン成功');
+
+      // トップメニュー投入
+      addLog('--- トップページメニュー ---');
+      for (const item of topMenuData) {
+        await addDoc(collection(db, 'top_menu'), { ...item, createdAt: serverTimestamp() });
+        addLog(`✓ ${item.name}`);
+      }
 
       // メニュー投入
       addLog('--- メニューデータ ---');

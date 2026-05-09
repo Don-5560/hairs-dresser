@@ -17,6 +17,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const catOrder = ['cut', 'color', 'perm', 'treatment', 'spa'];
+
 const categoryMap = {
   cut:       { id: 'cut',       num: '01', en: 'Cut',       ja: 'カット',        desc: '骨格に合わせた似合わせカット<br>伸びても崩れないスタイルへ' },
   color:     { id: 'color',     num: '02', en: 'Color',     ja: 'カラー',        desc: '髪と頭皮を守る最高峰のケアカラー<br>染めるたびに美しい艶髪へ' },
@@ -29,34 +31,43 @@ async function loadMenu() {
   const menuContent = document.querySelector('.menu-content');
   if (!menuContent) return;
 
-  // カテゴリーナビは残す
-  const catNav = menuContent.querySelector('.category-nav');
+  const setSection = menuContent.querySelector('#set');
 
-  // 既存セクション（#set 以外）を削除してから再描画
+  // 既存セクション（#set 以外）を削除
   menuContent.querySelectorAll('.menu-section:not(#set)').forEach(el => el.remove());
 
   try {
-    const q = query(collection(db, 'menu'), orderBy('category'), orderBy('order'));
-    const snap = await getDocs(q);
+    // ← orderByを1つだけにしてインデックスエラー回避、JS側でソート
+    const snap = await getDocs(collection(db, 'menu'));
+
+    if (snap.empty) {
+      console.log('メニューデータがありません');
+      return;
+    }
+
+    // 全件取得してJS側でソート
+    const items = [];
+    snap.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+    items.sort((a, b) => {
+      const ci = catOrder.indexOf(a.category) - catOrder.indexOf(b.category);
+      if (ci !== 0) return ci;
+      return (a.order || 0) - (b.order || 0);
+    });
 
     // カテゴリーごとにグループ化
     const groups = {};
-    snap.forEach(doc => {
-      const d = doc.data();
-      if (!groups[d.category]) groups[d.category] = [];
-      groups[d.category].push(d);
+    items.forEach(item => {
+      if (!groups[item.category]) groups[item.category] = [];
+      groups[item.category].push(item);
     });
 
-    // セクションを順番に挿入（#set の前に）
-    const setSection = menuContent.querySelector('#set');
-    const order = ['cut', 'color', 'perm', 'treatment', 'spa'];
-
-    order.forEach(cat => {
-      const items = groups[cat];
-      if (!items || items.length === 0) return;
+    // セクションを生成
+    catOrder.forEach(cat => {
+      const catItems = groups[cat];
+      if (!catItems || catItems.length === 0) return;
       const info = categoryMap[cat];
 
-      const rows = items.map(item => {
+      const rows = catItems.map(item => {
         const badge = item.badge
           ? `<span class="menu-row-badge${item.badge === '人気' ? ' popular' : ''}">${item.badge}</span>`
           : '';
@@ -66,7 +77,7 @@ async function loadMenu() {
             <div class="menu-row-name">${item.name}${small}</div>
             ${badge}
             <span class="menu-row-time">${item.time || ''}</span>
-            <div class="menu-row-price">${item.price}</div>
+            <div class="menu-row-price">${item.price || ''}</div>
           </li>`;
       }).join('');
 
@@ -84,7 +95,7 @@ async function loadMenu() {
       menuContent.insertBefore(section, setSection);
     });
 
-    // セットメニューを動的に読み込む
+    // セットメニューを読み込む
     await loadSetMenu();
 
   } catch (e) {
@@ -97,21 +108,23 @@ async function loadSetMenu() {
   if (!setSection) return;
 
   try {
-    const q = query(collection(db, 'setmenu'), orderBy('order'));
-    const snap = await getDocs(q);
+    const snap = await getDocs(collection(db, 'setmenu'));
     if (snap.empty) return;
+
+    const items = [];
+    snap.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+    items.sort((a, b) => (a.order || 0) - (b.order || 0));
 
     const setGrid = setSection.querySelector('.set-grid');
     if (!setGrid) return;
     setGrid.innerHTML = '';
 
-    snap.forEach(doc => {
-      const d = doc.data();
+    items.forEach(d => {
       const detail = (d.detail || '').replace(/\n/g, '<br>');
       setGrid.innerHTML += `
         <div class="set-card">
           <span class="set-card-badge new">新規限定</span>
-          <p class="set-card-name">${d.name.replace(/\+/g, '+<br>').replace(/＋/g, '＋<br>')}</p>
+          <p class="set-card-name">${d.name}</p>
           <p class="set-card-detail">${detail}</p>
           <div class="set-card-price-wrap">
             <span class="set-card-price-old">${d.priceOld}</span>
@@ -127,6 +140,7 @@ async function loadSetMenu() {
 
 loadMenu();
 
+
 /* =====================
   ハンバーガーメニューの開閉
 ===================== */
@@ -135,7 +149,6 @@ const mobileMenu = document.getElementById('mobileMenu');
 
 hamburger.addEventListener('click', function () {
   const isOpen = mobileMenu.classList.contains('open');
-
   if (isOpen) {
     closeMenu();
   } else {
@@ -150,6 +163,7 @@ function closeMenu() {
   hamburger.classList.remove('open');
   document.body.style.overflow = '';
 }
+window.closeMenu = closeMenu;
 
 
 /* =====================
@@ -158,15 +172,13 @@ function closeMenu() {
 function scrollToSection(id) {
   const el = document.getElementById(id);
   if (!el) return;
-
-  const offset = 100; // ナビの高さ分
+  const offset = 100;
   const top = el.getBoundingClientRect().top + window.scrollY - offset;
   window.scrollTo({ top, behavior: 'smooth' });
-
-  // クリックしたボタンをアクティブに
   document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
   event.target.classList.add('active');
 }
+window.scrollToSection = scrollToSection;
 
 
 /* =====================
@@ -176,15 +188,11 @@ const sections = ['cut', 'color', 'perm', 'treatment', 'spa', 'set'];
 
 window.addEventListener('scroll', () => {
   let current = '';
-
   sections.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    if (window.scrollY >= el.offsetTop - 120) {
-      current = id;
-    }
+    if (window.scrollY >= el.offsetTop - 120) current = id;
   });
-
   document.querySelectorAll('.cat-btn').forEach((btn, i) => {
     btn.classList.toggle('active', sections[i] === current);
   });

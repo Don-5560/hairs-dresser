@@ -182,6 +182,57 @@
       padding: 12px 0 8px; border-bottom: 1px solid #E8E4DC; margin-bottom: 8px;
     }
     .cat-group + .cat-group { margin-top: 20px; }
+
+    /* ===== ハンバーガー（スマホ用） ===== */
+    .admin-hamburger {
+      display: none; flex-direction: column; justify-content: center; align-items: center;
+      gap: 5px; width: 40px; height: 40px; background: none; border: none; cursor: pointer;
+    }
+    .admin-hamburger span {
+      display: block; width: 22px; height: 1.5px; background: #fff;
+      transition: all 0.3s; transform-origin: center;
+    }
+    .admin-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .admin-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .admin-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* サイドバーオーバーレイ */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0; z-index: 90;
+      background: rgba(0,0,0,0.4);
+    }
+    .sidebar-overlay.show { display: block; }
+
+    /* ===== スマホ用メディアクエリ ===== */
+    @media (max-width: 768px) {
+      .admin-hamburger { display: flex; }
+      .admin-user { display: none; }
+      .admin-header-logo { font-size: 11px; letter-spacing: 0.15em; }
+
+      .admin-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 95;
+        width: 240px;
+      }
+      .admin-sidebar.open { transform: translateX(0); }
+
+      .admin-main {
+        margin-left: 0;
+        width: 100%;
+        padding: 24px 16px;
+      }
+
+      .panel-title { font-size: 17px; }
+      .card { padding: 20px 16px; }
+      .form-grid { grid-template-columns: 1fr; gap: 0; }
+
+      .item-row { padding: 12px 12px; gap: 8px; }
+      .item-row-title { font-size: 12px; }
+      .btn-edit, .btn-delete { padding: 5px 10px; font-size: 8px; }
+
+      .modal { padding: 28px 20px; }
+    }
   </style>
 </head>
 <body>
@@ -203,15 +254,21 @@
 <!-- ===== 管理画面 ===== -->
 <div id="admin-screen">
   <header class="admin-header">
-    <span class="admin-header-logo">HAIR'S DRESSER. — 管理画面</span>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="admin-hamburger" id="admin-hamburger">
+        <span></span><span></span><span></span>
+      </button>
+      <span class="admin-header-logo">HAIR'S DRESSER. — 管理画面</span>
+    </div>
     <div class="admin-header-right">
       <span class="admin-user" id="admin-email"></span>
       <button class="logout-btn" id="logout-btn">ログアウト</button>
     </div>
   </header>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <div class="admin-body">
-    <nav class="admin-sidebar">
+    <nav class="admin-sidebar" id="admin-sidebar">
       <p class="sidebar-label">コンテンツ</p>
       <div class="sidebar-link active" data-panel="news">
         <span class="sidebar-icon">📢</span> NEWS
@@ -399,6 +456,29 @@
   });
   document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
+  // ===== ハンバーガーメニュー =====
+  const adminHamburger = document.getElementById('admin-hamburger');
+  const adminSidebar = document.getElementById('admin-sidebar');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+  function openSidebar() {
+    adminSidebar.classList.add('open');
+    sidebarOverlay.classList.add('show');
+    adminHamburger.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    adminSidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('show');
+    adminHamburger.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  adminHamburger.addEventListener('click', () => {
+    adminSidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+  });
+  sidebarOverlay.addEventListener('click', closeSidebar);
+
   // ===== ナビ =====
   document.querySelectorAll('.sidebar-link').forEach(link => {
     link.addEventListener('click', () => {
@@ -406,6 +486,7 @@
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       link.classList.add('active');
       document.getElementById('panel-' + link.dataset.panel).classList.add('active');
+      closeSidebar(); // スマホではメニュー選択後に閉じる
     });
   });
 

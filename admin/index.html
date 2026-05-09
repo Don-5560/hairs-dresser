@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HAIR'S DRESSER — 管理画面</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Zen Kaku Gothic New', sans-serif; background: #F5F3EF; color: #111; min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+    li { list-style: none; }
+
+    /* ===== LOGIN ===== */
+    #login-screen {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: #111;
+    }
+    .login-box {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 56px 48px;
+      width: 400px;
+    }
+    .login-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-weight: 300; letter-spacing: 0.3em;
+      color: #fff; text-align: center; margin-bottom: 8px;
+    }
+    .login-sub {
+      font-size: 9px; letter-spacing: 0.3em; color: #666;
+      text-align: center; margin-bottom: 40px;
+    }
+    .login-box label {
+      display: block; font-size: 9px; letter-spacing: 0.3em;
+      color: #888; margin-bottom: 8px;
+    }
+    .login-box input {
+      width: 100%; padding: 12px 16px;
+      background: #111; border: 1px solid #333; color: #fff;
+      font-family: inherit; font-size: 13px;
+      margin-bottom: 20px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-box input:focus { border-color: #666; }
+    .login-btn {
+      width: 100%; padding: 14px;
+      background: #fff; color: #111;
+      font-family: inherit; font-size: 10px; letter-spacing: 0.3em;
+      border: none; cursor: pointer; transition: background 0.2s;
+    }
+    .login-btn:hover { background: #e0e0e0; }
+    .login-error {
+      font-size: 11px; color: #e05555;
+      text-align: center; margin-top: 16px; min-height: 20px;
+    }
+
+    /* ===== ADMIN LAYOUT ===== */
+    #admin-screen { display: none; min-height: 100vh; }
+    .admin-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 56px; background: #111;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+    }
+    .admin-header-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px; font-weight: 300; letter-spacing: 0.3em; color: #fff;
+    }
+    .admin-header-right { display: flex; align-items: center; gap: 24px; }
+    .admin-user { font-size: 9px; letter-spacing: 0.2em; color: #999; }
+    .logout-btn {
+      font-size: 9px; letter-spacing: 0.2em; color: #888;
+      background: none; border: 1px solid #444;
+      padding: 6px 16px; cursor: pointer; font-family: inherit;
+      transition: all 0.2s;
+    }
+    .logout-btn:hover { color: #fff; border-color: #fff; }
+
+    .admin-body {
+      padding-top: 56px;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* サイドバー */
+    .admin-sidebar {
+      background: #fff; border-right: 1px solid #E8E4DC;
+      padding: 32px 0;
+      position: fixed; top: 56px; left: 0; bottom: 0; width: 200px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .sidebar-label {
+      font-size: 8px; letter-spacing: 0.4em; color: #bbb;
+      padding: 0 24px; margin-bottom: 8px; margin-top: 24px;
+    }
+    .sidebar-label:first-child { margin-top: 0; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 24px; font-size: 12px; letter-spacing: 0.05em;
+      color: #888; cursor: pointer; transition: all 0.2s;
+      border-left: 2px solid transparent;
+      white-space: nowrap;
+    }
+    .sidebar-link:hover { color: #111; background: #f5f5f5; }
+    .sidebar-link.active { color: #111; border-left-color: #111; background: #f5f5f5; }
+    .sidebar-icon { font-size: 14px; flex-shrink: 0; }
+
+    /* メインコンテンツ */
+    .admin-main {
+      margin-left: 200px;
+      padding: 40px;
+      flex: 1;
+      min-width: 0;
+      width: calc(100% - 200px);
+    }
+
+    /* パネル */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .panel-title {
+      font-size: 20px; font-weight: 400; letter-spacing: 0.05em;
+      margin-bottom: 32px; padding-bottom: 16px;
+      border-bottom: 1px solid #E8E4DC;
+    }
+
+    /* カード */
+    .card {
+      background: #fff; border: 1px solid #E8E4DC;
+      padding: 32px; margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 11px; letter-spacing: 0.3em; color: #bbb;
+      margin-bottom: 24px;
+    }
+
+    /* フォーム */
+    .form-row { margin-bottom: 20px; }
+    .form-row label {
+      display: block; font-size: 9px; letter-spacing: 0.3em;
+      color: #888; margin-bottom: 8px;
+    }
+    .form-row input,
+    .form-row textarea,
+    .form-row select {
+      width: 100%; padding: 10px 14px;
+      border: 1px solid #E8E4DC; background: #fff;
+      font-family: inherit; font-size: 13px; color: #111;
+      outline: none; transition: border-color 0.2s;
+    }
+    .form-row input:focus,
+    .form-row textarea:focus,
+    .form-row select:focus { border-color: #111; }
+    .form-row textarea { min-height: 100px; resize: vertical; }
+    .form-row select { cursor: pointer; }
+
+    .form-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-primary {
+      padding: 11px 28px; background: #111; color: #fff;
+      border: none; font-family: inherit; font-size: 10px;
+      letter-spacing: 0.2em; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #333; }
+    .btn-secondary {
+      padding: 10px 24px; background: #fff; color: #111;
+      border: 1px solid #E8E4DC; font-family: inherit; font-size: 10px;
+      letter-spacing: 0.2em; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: #111; }
+    .save-status {
+      font-size: 10px; letter-spacing: 0.1em; color: #4caf50;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .save-status.show { opacity: 1; }
+
+    /* リスト */
+    .item-list { display: flex; flex-direction: column; gap: 12px; }
+    .item-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border: 1px solid #E8E4DC; background: #fff;
+      transition: border-color 0.2s;
+    }
+    .item-row:hover { border-color: #ccc; }
+    .item-row-left { flex: 1; }
+    .item-row-title { font-size: 13px; margin-bottom: 4px; }
+    .item-row-meta { font-size: 10px; color: #bbb; letter-spacing: 0.1em; }
+    .item-row-actions { display: flex; gap: 8px; }
+    .btn-edit {
+      padding: 6px 16px; font-size: 9px; letter-spacing: 0.2em;
+      border: 1px solid #E8E4DC; background: #fff; cursor: pointer;
+      font-family: inherit; transition: all 0.2s;
+    }
+    .btn-edit:hover { border-color: #111; color: #111; }
+    .btn-delete {
+      padding: 6px 16px; font-size: 9px; letter-spacing: 0.2em;
+      border: 1px solid #E8E4DC; background: #fff; color: #e05555;
+      cursor: pointer; font-family: inherit; transition: all 0.2s;
+    }
+    .btn-delete:hover { border-color: #e05555; background: #fff5f5; }
+
+    /* 空の状態 */
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      font-size: 12px; color: #ccc; letter-spacing: 0.1em;
+    }
+
+    /* タグ */
+    .tag {
+      display: inline-block;
+      padding: 2px 10px; font-size: 8px; letter-spacing: 0.2em;
+      border: 1px solid #E8E4DC; color: #bbb; margin-right: 6px;
+    }
+    .tag.active-tag { border-color: #111; color: #111; background: #f5f5f5; }
+
+    /* 価格グリッド */
+    .price-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 768px) { .price-grid { grid-template-columns: 1fr; } }
+
+    /* モーダル */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.5); align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #fff; padding: 40px; width: 560px; max-width: 90vw;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-title {
+      font-size: 14px; letter-spacing: 0.1em; margin-bottom: 28px;
+    }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+
+    .loading {
+      text-align: center; padding: 40px;
+      font-size: 11px; color: #bbb; letter-spacing: 0.2em;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== ログイン画面 ===== -->
+<div id="login-screen">
+  <div class="login-box">
+    <p class="login-logo">HAIR'S DRESSER.</p>
+    <p class="login-sub">ADMIN PANEL</p>
+    <label>メールアドレス</label>
+    <input type="email" id="login-email" placeholder="admin@example.com">
+    <label>パスワード</label>
+    <input type="password" id="login-password" placeholder="••••••••">
+    <button class="login-btn" id="login-btn">ログイン</button>
+    <p class="login-error" id="login-error"></p>
+  </div>
+</div>
+
+<!-- ===== 管理画面 ===== -->
+<div id="admin-screen">
+
+  <header class="admin-header">
+    <span class="admin-header-logo">HAIR'S DRESSER. — 管理画面</span>
+    <div class="admin-header-right">
+      <span class="admin-user" id="admin-email"></span>
+      <button class="logout-btn" id="logout-btn">ログアウト</button>
+    </div>
+  </header>
+
+  <div class="admin-body">
+
+    <nav class="admin-sidebar">
+      <p class="sidebar-label">コンテンツ</p>
+      <div class="sidebar-link active" data-panel="news">
+        <span class="sidebar-icon">📢</span> NEWS
+      </div>
+      <div class="sidebar-link" data-panel="menu">
+        <span class="sidebar-icon">✂️</span> メニュー
+      </div>
+      <div class="sidebar-link" data-panel="price">
+        <span class="sidebar-icon">💴</span> 料金
+      </div>
+    </nav>
+
+    <main class="admin-main">
+
+      <!-- NEWSパネル -->
+      <div class="panel active" id="panel-news">
+        <h2 class="panel-title">NEWS 管理</h2>
+        <div class="card">
+          <p class="card-title">新規追加</p>
+          <div class="form-row">
+            <label>タイトル</label>
+            <input type="text" id="news-title" placeholder="お知らせのタイトル">
+          </div>
+          <div class="form-row">
+            <label>日付</label>
+            <input type="date" id="news-date">
+          </div>
+          <div class="form-row">
+            <label>内容（任意）</label>
+            <textarea id="news-body" placeholder="詳細内容があれば入力"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" id="news-add-btn">追加する</button>
+            <span class="save-status" id="news-status">✓ 保存しました</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-title">投稿一覧</p>
+          <div class="item-list" id="news-list">
+            <div class="loading">読み込み中...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- メニューパネル -->
+      <div class="panel" id="panel-menu">
+        <h2 class="panel-title">メニュー管理</h2>
+        <div class="card">
+          <p class="card-title">新規追加</p>
+          <div class="form-row">
+            <label>メニュー名</label>
+            <input type="text" id="menu-name" placeholder="カット（シャンプー・ブロー込み）">
+          </div>
+          <div class="form-row">
+            <label>サブ説明（任意）</label>
+            <input type="text" id="menu-small-desc" placeholder="カウンセリング付き / スタイリングレクチャーあり">
+          </div>
+          <div class="form-row">
+            <label>カテゴリ</label>
+            <select id="menu-category">
+              <option value="cut">カット</option>
+              <option value="color">カラー</option>
+              <option value="perm">パーマ</option>
+              <option value="treatment">トリートメント</option>
+              <option value="spa">ヘッドスパ</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>所要時間</label>
+            <input type="text" id="menu-time" placeholder="60 min">
+          </div>
+          <div class="form-row">
+            <label>価格表示</label>
+            <input type="text" id="menu-price" placeholder="¥3,200〜">
+          </div>
+          <div class="form-row">
+            <label>バッジ（任意）</label>
+            <select id="menu-badge">
+              <option value="">なし</option>
+              <option value="人気">人気</option>
+              <option value="おすすめ">おすすめ</option>
+              <option value="新メニュー">新メニュー</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>表示順</label>
+            <input type="number" id="menu-order" placeholder="1" value="1">
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" id="menu-add-btn">追加する</button>
+            <span class="save-status" id="menu-status">✓ 保存しました</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-title">メニュー一覧</p>
+          <div class="item-list" id="menu-list">
+            <div class="loading">読み込み中...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 料金パネル -->
+      <div class="panel" id="panel-price">
+        <h2 class="panel-title">料金表管理</h2>
+        <div class="card">
+          <p class="card-title">料金を追加・編集</p>
+          <div class="form-row">
+            <label>サービス名</label>
+            <input type="text" id="price-name" placeholder="カット（女性）">
+          </div>
+          <div class="form-row">
+            <label>価格表示</label>
+            <input type="text" id="price-value" placeholder="¥4,500〜 または ¥3,000">
+          </div>
+          <div class="form-row">
+            <label>カテゴリ</label>
+            <select id="price-category">
+              <option value="カット">カット</option>
+              <option value="カラー">カラー</option>
+              <option value="パーマ">パーマ</option>
+              <option value="トリートメント">トリートメント</option>
+              <option value="その他">その他</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>表示順</label>
+            <input type="number" id="price-order" placeholder="1" value="1">
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" id="price-add-btn">追加する</button>
+            <span class="save-status" id="price-status">✓ 保存しました</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-title">料金一覧</p>
+          <div class="item-list" id="price-list">
+            <div class="loading">読み込み中...</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- 編集モーダル -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <p class="modal-title" id="modal-title">編集</p>
+    <div id="modal-fields"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="modal-save-btn">保存</button>
+      <button class="btn-secondary" id="modal-cancel-btn">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, orderBy, query, serverTimestamp }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCIbgCMSevcE1tteOv35ZFpFG57Yt6CPJ8",
+    authDomain: "hairs-dresser.firebaseapp.com",
+    projectId: "hairs-dresser",
+    storageBucket: "hairs-dresser.firebasestorage.app",
+    messagingSenderId: "298877912322",
+    appId: "1:298877912322:web:1b3f08f2bb4a57b4f12e1b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ===== 認証 =====
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-screen').style.display = 'block';
+      document.getElementById('admin-email').textContent = user.email;
+      loadAll();
+    } else {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('admin-screen').style.display = 'none';
+    }
+  });
+
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const errEl = document.getElementById('login-error');
+    errEl.textContent = '';
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      errEl.textContent = 'メールアドレスまたはパスワードが違います';
+    }
+  });
+
+  // Enterキーでログイン
+  document.getElementById('login-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-btn').click();
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+  // ===== ナビゲーション =====
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      link.classList.add('active');
+      document.getElementById('panel-' + link.dataset.panel).classList.add('active');
+    });
+  });
+
+  // ===== ステータス表示 =====
+  function showStatus(id) {
+    const el = document.getElementById(id);
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2500);
+  }
+
+  // ===== 全データ読み込み =====
+  function loadAll() {
+    loadNews();
+    loadMenu();
+    loadPrice();
+  }
+
+  // ===== お知らせ =====
+  async function loadNews() {
+    const listEl = document.getElementById('news-list');
+    try {
+      const q = query(collection(db, 'news'), orderBy('date', 'desc'));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        listEl.innerHTML = '<p class="empty-state">お知らせはまだありません</p>';
+        return;
+      }
+      listEl.innerHTML = '';
+      snap.forEach(docSnap => {
+        const d = docSnap.data();
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+          <div class="item-row-left">
+            <p class="item-row-title">${d.title}</p>
+            <p class="item-row-meta">${d.date}</p>
+          </div>
+          <div class="item-row-actions">
+            <button class="btn-delete" data-id="${docSnap.id}" data-col="news">削除</button>
+          </div>`;
+        listEl.appendChild(row);
+      });
+    } catch (e) { listEl.innerHTML = '<p class="empty-state">読み込みエラー</p>'; }
+    bindDeleteBtns();
+  }
+
+  document.getElementById('news-add-btn').addEventListener('click', async () => {
+    const title = document.getElementById('news-title').value.trim();
+    const date = document.getElementById('news-date').value;
+    const body = document.getElementById('news-body').value.trim();
+    if (!title || !date) return alert('タイトルと日付を入力してください');
+    await addDoc(collection(db, 'news'), { title, date, body, createdAt: serverTimestamp() });
+    document.getElementById('news-title').value = '';
+    document.getElementById('news-date').value = '';
+    document.getElementById('news-body').value = '';
+    showStatus('news-status');
+    loadNews();
+  });
+
+  // カテゴリー日本語変換
+  const catLabel = { cut:'カット', color:'カラー', perm:'パーマ', treatment:'トリートメント', spa:'ヘッドスパ' };
+
+  // ===== メニュー =====
+  async function loadMenu() {
+    const listEl = document.getElementById('menu-list');
+    try {
+      const q = query(collection(db, 'menu'), orderBy('category'), orderBy('order'));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        listEl.innerHTML = '<p class="empty-state">メニューはまだありません</p>';
+        return;
+      }
+      listEl.innerHTML = '';
+      snap.forEach(docSnap => {
+        const d = docSnap.data();
+        const badge = d.badge ? ` <span class="tag active-tag">${d.badge}</span>` : '';
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+          <div class="item-row-left">
+            <p class="item-row-title">${d.name}${badge} <span class="tag">${catLabel[d.category] || d.category}</span></p>
+            <p class="item-row-meta">${d.price || ''}　${d.time || ''}${d.smallDesc ? '　' + d.smallDesc : ''}</p>
+          </div>
+          <div class="item-row-actions">
+            <button class="btn-delete" data-id="${docSnap.id}" data-col="menu">削除</button>
+          </div>`;
+        listEl.appendChild(row);
+      });
+    } catch (e) { listEl.innerHTML = '<p class="empty-state">読み込みエラー</p>'; }
+    bindDeleteBtns();
+  }
+
+  document.getElementById('menu-add-btn').addEventListener('click', async () => {
+    const name = document.getElementById('menu-name').value.trim();
+    const smallDesc = document.getElementById('menu-small-desc').value.trim();
+    const category = document.getElementById('menu-category').value;
+    const time = document.getElementById('menu-time').value.trim();
+    const price = document.getElementById('menu-price').value.trim();
+    const badge = document.getElementById('menu-badge').value;
+    const order = parseInt(document.getElementById('menu-order').value) || 99;
+    if (!name) return alert('メニュー名を入力してください');
+    await addDoc(collection(db, 'menu'), { name, smallDesc, category, time, price, badge, order, createdAt: serverTimestamp() });
+    document.getElementById('menu-name').value = '';
+    document.getElementById('menu-small-desc').value = '';
+    document.getElementById('menu-time').value = '';
+    document.getElementById('menu-price').value = '';
+    document.getElementById('menu-order').value = '1';
+    showStatus('menu-status');
+    loadMenu();
+  });
+
+  // ===== 料金 =====
+  async function loadPrice() {
+    const listEl = document.getElementById('price-list');
+    try {
+      const q = query(collection(db, 'prices'), orderBy('order'));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        listEl.innerHTML = '<p class="empty-state">料金はまだありません</p>';
+        return;
+      }
+      listEl.innerHTML = '';
+      snap.forEach(docSnap => {
+        const d = docSnap.data();
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+          <div class="item-row-left">
+            <p class="item-row-title">${d.name}</p>
+            <p class="item-row-meta">${d.value}　<span class="tag">${d.category}</span></p>
+          </div>
+          <div class="item-row-actions">
+            <button class="btn-delete" data-id="${docSnap.id}" data-col="prices">削除</button>
+          </div>`;
+        listEl.appendChild(row);
+      });
+    } catch (e) { listEl.innerHTML = '<p class="empty-state">読み込みエラー</p>'; }
+    bindDeleteBtns();
+  }
+
+  document.getElementById('price-add-btn').addEventListener('click', async () => {
+    const name = document.getElementById('price-name').value.trim();
+    const value = document.getElementById('price-value').value.trim();
+    const category = document.getElementById('price-category').value;
+    const order = parseInt(document.getElementById('price-order').value) || 99;
+    if (!name || !value) return alert('サービス名と価格を入力してください');
+    await addDoc(collection(db, 'prices'), { name, value, category, order, createdAt: serverTimestamp() });
+    document.getElementById('price-name').value = '';
+    document.getElementById('price-value').value = '';
+    document.getElementById('price-order').value = '1';
+    showStatus('price-status');
+    loadPrice();
+  });
+
+  // ===== 削除 =====
+  function bindDeleteBtns() {
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.onclick = async () => {
+        if (!confirm('削除しますか？')) return;
+        await deleteDoc(doc(db, btn.dataset.col, btn.dataset.id));
+        if (btn.dataset.col === 'news') loadNews();
+        if (btn.dataset.col === 'menu') loadMenu();
+        if (btn.dataset.col === 'prices') loadPrice();
+      };
+    });
+  }
+</script>
+</body>
+</html>

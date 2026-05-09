@@ -1,81 +1,88 @@
 /* =====================
-  ハンバーガーメニューの開閉
-  
-  やってること：
-  1. ハンバーガーボタンをクリック
-  2. "open"クラスを付ける/外す
-  3. CSSで表示/非表示が切り替わる
+  Firebase 初期化
 ===================== */
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, getDocs, query, orderBy }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-// ボタンとメニューの要素を取得
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
+const firebaseConfig = {
+  apiKey: "AIzaSyCIbgCMSevcE1tteOv35ZFpFG57Yt6CPJ8",
+  authDomain: "hairs-dresser.firebaseapp.com",
+  projectId: "hairs-dresser",
+  storageBucket: "hairs-dresser.firebasestorage.app",
+  messagingSenderId: "298877912322",
+  appId: "1:298877912322:web:1b3f08f2bb4a57b4f12e1b"
+};
 
-// ハンバーガーボタンをクリックしたとき
-hamburger.addEventListener('click', function() {
-
-  // すでに開いているか確認
-  const isOpen = mobileMenu.classList.contains('open');
-
-  if (isOpen) {
-    // 開いていたら閉じる
-    closeMenu();
-  } else {
-    // 閉じていたら開く
-    mobileMenu.classList.add('open');
-    hamburger.classList.add('open');
-    document.body.style.overflow = 'hidden'; // スクロール禁止
-  }
-
-});
-
-// メニューを閉じる関数（HTMLのonclick=""からも呼ばれる）
-function closeMenu() {
-  mobileMenu.classList.remove('open');
-  hamburger.classList.remove('open');
-  document.body.style.overflow = ''; // スクロール解除
-}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 
 /* =====================
-  microCMS からイベントを取得して表示
+  ハンバーガーメニューの開閉
 ===================== */
-async function loadEvents() {
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+
+hamburger.addEventListener('click', function() {
+  const isOpen = mobileMenu.classList.contains('open');
+  if (isOpen) {
+    closeMenu();
+  } else {
+    mobileMenu.classList.add('open');
+    hamburger.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+});
+
+// HTMLのonclickから呼べるようにグローバルに公開
+function closeMenu() {
+  mobileMenu.classList.remove('open');
+  hamburger.classList.remove('open');
+  document.body.style.overflow = '';
+}
+window.closeMenu = closeMenu;
+
+
+/* =====================
+  Firestore から NEWS を取得して表示
+===================== */
+async function loadNews() {
   const list = document.querySelector('.event-list');
   if (!list) return;
 
   try {
-    const res = await fetch('https://zjf3r5fchx.microcms.io/api/v1/events?orders=-date', {
-      headers: { 'X-MICROCMS-API-KEY': 'y5YS0lD3Y97Bj8iwQ1cECeGjOeYpqX1UCmbn' }
-    });
-    const data = await res.json();
+    const q = query(collection(db, 'news'), orderBy('date', 'desc'));
+    const snap = await getDocs(q);
 
-    if (data.contents.length === 0) {
+    if (snap.empty) {
       list.innerHTML = '<li style="padding:28px 0; color:#6b6b6b;">現在お知らせはありません。</li>';
       return;
     }
 
-    list.innerHTML = data.contents.map(event => {
-      const d = new Date(event.date);
-      const formatted = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-      const datetime = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    list.innerHTML = snap.docs.map(doc => {
+      const d = doc.data();
+      // YYYY-MM-DD 形式の日付を表示用に変換
+      const parts = d.date.split('-');
+      const formatted = parts.length === 3
+        ? `${parts[0]}.${parts[1]}.${parts[2]}`
+        : d.date;
       return `
         <li class="event-item">
           <div class="event-meta">
-            <time class="event-date" datetime="${datetime}">${formatted}</time>
-            <span class="event-tag">EVENT</span>
+            <time class="event-date" datetime="${d.date}">${formatted}</time>
+            <span class="event-tag">NEWS</span>
           </div>
-          <p class="event-title">${event.title}</p>
-        </li>
-      `;
+          <p class="event-title">${d.title}</p>
+        </li>`;
     }).join('');
 
   } catch (e) {
-    console.error('イベントの取得に失敗しました', e);
+    console.error('NEWSの取得に失敗しました', e);
   }
 }
 
-loadEvents();
+loadNews();
 
 
 /* =====================
@@ -107,11 +114,11 @@ loadEvents();
     const tuesdays = getDaysOfWeekInMonth(y, m, 2);
     const sundays  = getDaysOfWeekInMonth(y, m, 0);
 
-    if (dow === 1) return true; // 毎週月曜
-    if (dow === 0 && (sundays.indexOf(d) === 0 || sundays.indexOf(d) === 2)) return true; // 第1・3日曜
-    if (dow === 2 && (tuesdays.indexOf(d) === 1 || tuesdays.indexOf(d) === 3)) return true; // 第2・4火曜
+    if (dow === 1) return true;
+    if (dow === 0 && (sundays.indexOf(d) === 0 || sundays.indexOf(d) === 2)) return true;
+    if (dow === 2 && (tuesdays.indexOf(d) === 1 || tuesdays.indexOf(d) === 3)) return true;
     if (mondays.length >= 5) {
-      if (dow === 2 && tuesdays.length >= 5 && tuesdays.indexOf(d) === 4) return true; // 第5火曜
+      if (dow === 2 && tuesdays.length >= 5 && tuesdays.indexOf(d) === 4) return true;
     }
     return false;
   }

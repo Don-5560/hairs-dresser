@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>初期データ投入</title>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #fff; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 20px; padding: 40px; }
+    button { padding: 16px 40px; background: #fff; color: #111; border: none; font-size: 14px; cursor: pointer; letter-spacing: 0.1em; }
+    button:hover { background: #ddd; }
+    button:disabled { background: #555; color: #999; cursor: not-allowed; }
+    #log { font-size: 12px; color: #aaa; text-align: left; line-height: 2; max-width: 500px; width: 100%; background: #1a1a1a; padding: 20px; }
+    .done { color: #4caf50; font-size: 14px; font-weight: bold; }
+    .err { color: #e05555; }
+  </style>
+</head>
+<body>
+  <p style="letter-spacing:0.3em; font-size:12px; color:#666;">HAIR'S DRESSER — 初期データ投入</p>
+  <button id="seed-btn">既存データをFirestoreに追加する</button>
+  <div id="log">ボタンを押すとデータを投入します</div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+  import { getFirestore, collection, addDoc, serverTimestamp }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCIbgCMSevcE1tteOv35ZFpFG57Yt6CPJ8",
+    authDomain: "hairs-dresser.firebaseapp.com",
+    projectId: "hairs-dresser",
+    storageBucket: "hairs-dresser.firebasestorage.app",
+    messagingSenderId: "298877912322",
+    appId: "1:298877912322:web:1b3f08f2bb4a57b4f12e1b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ===== メニューデータ（menu.htmlより） =====
+  const menuData = [
+    // カット
+    { name: 'カット（シャンプー・ブロー込み）', smallDesc: 'カウンセリング付き / スタイリングレクチャーあり', category: 'cut', time: '60 min', price: '¥3,200〜', badge: '', order: 1 },
+    { name: '前髪カット', smallDesc: 'セットのみ / シャンプーなし', category: 'cut', time: '15 min', price: '¥550〜', badge: '', order: 2 },
+    // カラー
+    { name: 'フルカラー', smallDesc: 'シャンプー・ブロー込み', category: 'color', time: '90 min', price: '¥8,000〜', badge: '', order: 1 },
+    { name: '高濃度水素カラー', smallDesc: '酸化ダメージを中和・潤い・ツヤ・弾力をプラス', category: 'color', time: '90 min', price: '¥12,000〜', badge: '人気', order: 2 },
+    { name: 'リタッチカラー（根元のみ）', smallDesc: 'シャンプー・ブロー込み', category: 'color', time: '75 min', price: '¥6,500〜', badge: '', order: 3 },
+    { name: 'ブリーチ', smallDesc: 'ダメージケア薬剤使用', category: 'color', time: '120 min', price: '¥8,000〜', badge: '', order: 4 },
+    { name: '白髪染め（フル）', smallDesc: 'シャンプー・ブロー込み', category: 'color', time: '90 min', price: '¥8,000〜', badge: '', order: 5 },
+    { name: '白髪染め（リタッチ）', smallDesc: '', category: 'color', time: '75 min', price: '¥6,500〜', badge: '', order: 6 },
+    // パーマ
+    { name: 'パーマ', smallDesc: 'シャンプー・ブロー込み', category: 'perm', time: '120 min', price: '¥8,000〜', badge: '', order: 1 },
+    { name: '縮毛矯正', smallDesc: 'シャンプー・ブロー込み / くせ毛・うねりのお悩みに', category: 'perm', time: '180 min', price: '¥16,000〜', badge: '', order: 2 },
+    { name: '髪質改善（カット込み）', smallDesc: '縮毛矯正まではしなくてもいい方に / 乾かすだけでまとまる艶髪へ', category: 'perm', time: '150 min', price: '¥20,900〜', badge: '人気', order: 3 },
+    // トリートメント
+    { name: '補修トリートメント', smallDesc: '内側から栄養を補いツヤ・まとまりをキープ', category: 'treatment', time: '30 min', price: '¥2,750〜', badge: '', order: 1 },
+    { name: 'ヘアエステ', smallDesc: 'スチーマーでトリートメント成分をぐんぐん浸透。ツヤ・潤いを実感', category: 'treatment', time: '40 min', price: '¥3,850〜', badge: 'おすすめ', order: 2 },
+    { name: 'スペシャルヘアエステ', smallDesc: '極上3ステップ。潤いとツヤを3〜4週間キープ', category: 'treatment', time: '50 min', price: '¥5,500〜', badge: '人気', order: 3 },
+    // ヘッドスパ
+    { name: 'オイルクレンジング', smallDesc: '頭皮の汚れをやさしく落とし、うるおいを整える', category: 'spa', time: '20 min', price: '¥1,650〜', badge: '', order: 1 },
+    { name: '炭酸デトックスヘッドスパ（40分）', smallDesc: '炭酸シャンプー＆トリートメント。毛穴の汚れを落とし潤いと栄養を与える', category: 'spa', time: '40 min', price: '¥5,500〜', badge: '人気', order: 2 },
+    { name: '新感覚エイジングスパ', smallDesc: 'ヘッドスパ＋ヘアエステのW効果。育毛促進・デトックス◎', category: 'spa', time: '60 min', price: '¥8,250〜', badge: 'おすすめ', order: 3 },
+  ];
+
+  // ===== セットメニュー =====
+  const setMenuData = [
+    { name: '補修トリートメント + カット + カラー', detail: 'シャンプー・ブロー込み / ロング料金：肩下 +¥550〜\nダメージでパサついた髪に内側から栄養を補いツヤとまとまりをキープ', priceOld: '¥12,650', priceNew: '¥11,380', note: '税込 / 初回限定', order: 1 },
+    { name: 'スペシャルヘアエステ + カット + カラー', detail: 'シャンプー・ブロー込み / ロング料金：肩下 +¥550〜\n3ステップで潤い・ツヤを3〜4週間キープ', priceOld: '¥14,300', priceNew: '¥12,870', note: '税込 / 初回限定', order: 2 },
+    { name: '高濃度水素カラー + トリートメント + カット', detail: 'シャンプー・ブロー込み / ロング料金：肩下 +¥550〜\n最高峰のケアカラーで染めるたびに美しい艶髪へ', priceOld: '¥16,500', priceNew: '¥14,850', note: '税込 / 全員対象', order: 3 },
+    { name: 'オイルクレンジング + カット', detail: 'シャンプー・ブロー込み / ロング料金：肩下 +¥550〜\n頭皮ケアとカットをセットでお得に', priceOld: '¥6,050', priceNew: '¥5,440', note: '税込 / 初回限定', order: 4 },
+    { name: '炭酸デトックスSPA（40分）+ カット', detail: 'シャンプー・ブロー込み / ロング料金：肩下 +¥550〜\n頭皮すっきり＆骨格カットのセット', priceOld: '¥8,250', priceNew: '¥7,420', note: '税込 / 初回限定', order: 5 },
+    { name: 'カット + パーマ + 補修トリートメント', detail: 'シャンプー・ブロー込み / ロング料金：肩下 +¥550〜\nパーマ後のダメージを補修トリートメントでケア', priceOld: '¥13,200', priceNew: '¥11,880', note: '税込 / 初回限定', order: 6 },
+  ];
+
+  const log = document.getElementById('log');
+  const btn = document.getElementById('seed-btn');
+
+  function addLog(msg, cls='') {
+    log.innerHTML += `<span class="${cls}">${msg}</span><br>`;
+  }
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.textContent = '処理中...';
+    log.innerHTML = '';
+
+    try {
+      const email = prompt('管理者メールアドレスを入力');
+      const pass = prompt('パスワードを入力');
+      addLog('ログイン中...');
+      await signInWithEmailAndPassword(auth, email, pass);
+      addLog('✓ ログイン成功');
+
+      // メニュー投入
+      addLog('--- メニューデータ ---');
+      for (const item of menuData) {
+        await addDoc(collection(db, 'menu'), { ...item, createdAt: serverTimestamp() });
+        addLog(`✓ ${item.name}`);
+      }
+
+      // セットメニュー投入
+      addLog('--- セットメニュー ---');
+      for (const item of setMenuData) {
+        await addDoc(collection(db, 'setmenu'), { ...item, createdAt: serverTimestamp() });
+        addLog(`✓ ${item.name}`);
+      }
+
+      addLog('');
+      addLog('✓ すべてのデータを追加しました！このページは閉じてOKです。', 'done');
+      btn.textContent = '完了！';
+
+    } catch (e) {
+      addLog('❌ エラー: ' + e.message, 'err');
+      btn.disabled = false;
+      btn.textContent = '再試行';
+    }
+  });
+</script>
+</body>
+</html>

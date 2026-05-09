@@ -134,12 +134,38 @@
     .item-row-meta { font-size: 10px; color: #bbb; letter-spacing: 0.05em; }
     .item-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
+    .btn-edit {
+      padding: 5px 14px; font-size: 9px; letter-spacing: 0.15em;
+      border: 1px solid #E8E4DC; background: #fff; color: #555;
+      cursor: pointer; font-family: inherit; transition: all 0.2s;
+    }
+    .btn-edit:hover { border-color: #111; color: #111; }
+
     .btn-delete {
       padding: 5px 14px; font-size: 9px; letter-spacing: 0.15em;
       border: 1px solid #E8E4DC; background: #fff; color: #e05555;
       cursor: pointer; font-family: inherit; transition: all 0.2s;
     }
     .btn-delete:hover { border-color: #e05555; background: #fff5f5; }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.45); align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; width: 560px; max-width: 92vw;
+      max-height: 90vh; overflow-y: auto; padding: 40px;
+    }
+    .modal-title { font-size: 15px; letter-spacing: 0.05em; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid #E8E4DC; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .btn-secondary {
+      padding: 10px 24px; background: #fff; color: #888;
+      border: 1px solid #E8E4DC; font-family: inherit; font-size: 10px;
+      letter-spacing: 0.15em; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: #111; color: #111; }
 
     .tag {
       display: inline-block; padding: 1px 8px; font-size: 8px; letter-spacing: 0.15em;
@@ -312,6 +338,18 @@
   </div>
 </div>
 
+<!-- 編集モーダル -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <p class="modal-title" id="modal-title">編集</p>
+    <div id="modal-fields"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="modal-save">保存する</button>
+      <button class="btn-secondary" id="modal-cancel">キャンセル</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
@@ -353,11 +391,8 @@
     const password = document.getElementById('login-password').value;
     const errEl = document.getElementById('login-error');
     errEl.textContent = '';
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (e) {
-      errEl.textContent = 'メールアドレスまたはパスワードが違います';
-    }
+    try { await signInWithEmailAndPassword(auth, email, password); }
+    catch (e) { errEl.textContent = 'メールアドレスまたはパスワードが違います'; }
   });
   document.getElementById('login-password').addEventListener('keydown', e => {
     if (e.key === 'Enter') document.getElementById('login-btn').click();
@@ -382,18 +417,44 @@
 
   function loadAll() { loadNews(); loadTopMenu(); loadMenu(); loadSetMenu(); }
 
-  // ===== 順番入れ替え汎用関数 =====
+  // ===== 順番入れ替え =====
   async function moveItem(colName, items, index, direction) {
     const swapIndex = direction === 'up' ? index - 1 : index + 1;
     if (swapIndex < 0 || swapIndex >= items.length) return;
+    const a = items[index], b = items[swapIndex];
+    await updateDoc(doc(db, colName, a.id), { order: b.order });
+    await updateDoc(doc(db, colName, b.id), { order: a.order });
+  }
 
-    const a = items[index];
-    const b = items[swapIndex];
-    const aOrder = a.order;
-    const bOrder = b.order;
+  // ===== モーダル =====
+  const modal = document.getElementById('edit-modal');
+  let modalSaveFn = null;
 
-    await updateDoc(doc(db, colName, a.id), { order: bOrder });
-    await updateDoc(doc(db, colName, b.id), { order: aOrder });
+  document.getElementById('modal-cancel').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+  document.getElementById('modal-save').addEventListener('click', async () => {
+    if (modalSaveFn) await modalSaveFn();
+  });
+
+  function openModal(title, fields, saveFn) {
+    document.getElementById('modal-title').textContent = title;
+    const fieldsEl = document.getElementById('modal-fields');
+    fieldsEl.innerHTML = fields.map(f => {
+      if (f.type === 'select') {
+        const opts = f.options.map(o => `<option value="${o.v}" ${o.v === f.value ? 'selected' : ''}>${o.l}</option>`).join('');
+        return `<div class="form-row"><label>${f.label}</label><select id="mf-${f.key}">${opts}</select></div>`;
+      }
+      if (f.type === 'textarea') {
+        return `<div class="form-row"><label>${f.label}</label><textarea id="mf-${f.key}">${f.value || ''}</textarea></div>`;
+      }
+      return `<div class="form-row"><label>${f.label}</label><input type="${f.type || 'text'}" id="mf-${f.key}" value="${f.value || ''}"></div>`;
+    }).join('');
+    modalSaveFn = saveFn;
+    modal.classList.add('open');
+  }
+
+  function getModalVal(key) {
+    return document.getElementById('mf-' + key)?.value?.trim() || '';
   }
 
   // ===== NEWS =====
@@ -412,7 +473,7 @@
   function renderNewsList(items) {
     const listEl = document.getElementById('news-list');
     listEl.innerHTML = '';
-    items.forEach((item, i) => {
+    items.forEach(item => {
       const row = document.createElement('div');
       row.className = 'item-row';
       row.innerHTML = `
@@ -421,8 +482,22 @@
           <p class="item-row-meta">${item.date}</p>
         </div>
         <div class="item-row-actions">
+          <button class="btn-edit">編集</button>
           <button class="btn-delete" data-id="${item.id}" data-col="news">削除</button>
         </div>`;
+      row.querySelector('.btn-edit').addEventListener('click', () => {
+        openModal('NEWS を編集', [
+          { key:'title', label:'タイトル', value: item.title },
+          { key:'date',  label:'日付', type:'date', value: item.date },
+          { key:'body',  label:'内容（任意）', type:'textarea', value: item.body || '' },
+        ], async () => {
+          await updateDoc(doc(db, 'news', item.id), {
+            title: getModalVal('title'), date: getModalVal('date'), body: getModalVal('body')
+          });
+          modal.classList.remove('open');
+          loadNews();
+        });
+      });
       listEl.appendChild(row);
     });
     bindDeleteBtns('news-list', () => loadNews());
@@ -437,8 +512,7 @@
     document.getElementById('news-title').value = '';
     document.getElementById('news-date').value = '';
     document.getElementById('news-body').value = '';
-    showStatus('news-status');
-    loadNews();
+    showStatus('news-status'); loadNews();
   });
 
   // ===== トップメニュー =====
@@ -462,20 +536,30 @@
       row.className = 'item-row';
       row.innerHTML = `
         <div class="order-btns">
-          <button class="btn-order" ${i === 0 ? 'disabled' : ''} data-dir="up" data-i="${i}">▲</button>
-          <button class="btn-order" ${i === items.length - 1 ? 'disabled' : ''} data-dir="down" data-i="${i}">▼</button>
+          <button class="btn-order" ${i===0?'disabled':''} data-dir="up">▲</button>
+          <button class="btn-order" ${i===items.length-1?'disabled':''} data-dir="down">▼</button>
         </div>
         <div class="item-row-left">
           <p class="item-row-title">${item.name}</p>
           <p class="item-row-meta">${item.price || ''}</p>
         </div>
         <div class="item-row-actions">
+          <button class="btn-edit">編集</button>
           <button class="btn-delete" data-id="${item.id}" data-col="top_menu">削除</button>
         </div>`;
       row.querySelectorAll('.btn-order').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          await moveItem('top_menu', items, i, btn.dataset.dir);
-          loadTopMenu();
+        btn.addEventListener('click', async () => { await moveItem('top_menu', items, i, btn.dataset.dir); loadTopMenu(); });
+      });
+      row.querySelector('.btn-edit').addEventListener('click', () => {
+        openModal('トップメニューを編集', [
+          { key:'name',  label:'メニュー名', value: item.name },
+          { key:'price', label:'価格表示', value: item.price || '' },
+          { key:'desc',  label:'説明文', type:'textarea', value: item.desc || '' },
+        ], async () => {
+          await updateDoc(doc(db, 'top_menu', item.id), {
+            name: getModalVal('name'), price: getModalVal('price'), desc: getModalVal('desc')
+          });
+          modal.classList.remove('open'); loadTopMenu();
         });
       });
       listEl.appendChild(row);
@@ -489,13 +573,11 @@
     const desc = document.getElementById('topmenu-desc').value.trim();
     if (!name) return alert('メニュー名を入力してください');
     const snap = await getDocs(collection(db, 'top_menu'));
-    const order = snap.size + 1;
-    await addDoc(collection(db, 'top_menu'), { name, price, desc, order, createdAt: serverTimestamp() });
+    await addDoc(collection(db, 'top_menu'), { name, price, desc, order: snap.size + 1, createdAt: serverTimestamp() });
     document.getElementById('topmenu-name').value = '';
     document.getElementById('topmenu-price').value = '';
     document.getElementById('topmenu-desc').value = '';
-    showStatus('topmenu-status');
-    loadTopMenu();
+    showStatus('topmenu-status'); loadTopMenu();
   });
 
   // ===== メニューページ =====
@@ -517,22 +599,15 @@
   function renderMenuList(items) {
     const listEl = document.getElementById('menu-list');
     listEl.innerHTML = '';
-
-    // カテゴリー別にグループ化
     const groups = {};
-    items.forEach(item => {
-      if (!groups[item.category]) groups[item.category] = [];
-      groups[item.category].push(item);
-    });
+    items.forEach(item => { if (!groups[item.category]) groups[item.category] = []; groups[item.category].push(item); });
 
     catOrder.forEach(cat => {
       const catItems = groups[cat];
-      if (!catItems || catItems.length === 0) return;
-
+      if (!catItems || !catItems.length) return;
       const group = document.createElement('div');
       group.className = 'cat-group';
       group.innerHTML = `<p class="cat-group-title">${catLabel[cat] || cat}</p>`;
-
       const innerList = document.createElement('div');
       innerList.className = 'item-list';
 
@@ -542,35 +617,47 @@
         const badge = item.badge ? `<span class="tag hot">${item.badge}</span>` : '';
         row.innerHTML = `
           <div class="order-btns">
-            <button class="btn-order" ${i === 0 ? 'disabled' : ''} data-dir="up" data-i="${i}">▲</button>
-            <button class="btn-order" ${i === catItems.length - 1 ? 'disabled' : ''} data-dir="down" data-i="${i}">▼</button>
+            <button class="btn-order" ${i===0?'disabled':''} data-dir="up">▲</button>
+            <button class="btn-order" ${i===catItems.length-1?'disabled':''} data-dir="down">▼</button>
           </div>
           <div class="item-row-left">
             <p class="item-row-title">${item.name}${badge}</p>
-            <p class="item-row-meta">${item.price || ''}　${item.time || ''}</p>
+            <p class="item-row-meta">${item.price||''}　${item.time||''}</p>
           </div>
           <div class="item-row-actions">
+            <button class="btn-edit">編集</button>
             <button class="btn-delete" data-id="${item.id}" data-col="menu">削除</button>
           </div>`;
         row.querySelectorAll('.btn-order').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            await moveItem('menu', catItems, i, btn.dataset.dir);
-            loadMenu();
+          btn.addEventListener('click', async () => { await moveItem('menu', catItems, i, btn.dataset.dir); loadMenu(); });
+        });
+        row.querySelector('.btn-edit').addEventListener('click', () => {
+          openModal('メニューを編集', [
+            { key:'name',      label:'メニュー名', value: item.name },
+            { key:'category',  label:'カテゴリ', type:'select', value: item.category,
+              options: catOrder.map(c => ({ v: c, l: catLabel[c] })) },
+            { key:'price',     label:'価格表示', value: item.price || '' },
+            { key:'time',      label:'所要時間', value: item.time || '' },
+            { key:'badge',     label:'バッジ', type:'select', value: item.badge || '',
+              options: [{ v:'', l:'なし' },{ v:'人気', l:'人気' },{ v:'おすすめ', l:'おすすめ' },{ v:'新メニュー', l:'新メニュー' }] },
+            { key:'smallDesc', label:'サブ説明', value: item.smallDesc || '' },
+          ], async () => {
+            await updateDoc(doc(db, 'menu', item.id), {
+              name: getModalVal('name'), category: getModalVal('category'),
+              price: getModalVal('price'), time: getModalVal('time'),
+              badge: getModalVal('badge'), smallDesc: getModalVal('smallDesc'),
+            });
+            modal.classList.remove('open'); loadMenu();
           });
+        });
+        row.querySelector('.btn-delete').addEventListener('click', async () => {
+          if (!confirm('削除しますか？')) return;
+          await deleteDoc(doc(db, 'menu', item.id)); loadMenu();
         });
         innerList.appendChild(row);
       });
-
       group.appendChild(innerList);
       listEl.appendChild(group);
-    });
-
-    listEl.querySelectorAll('.btn-delete').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('削除しますか？')) return;
-        await deleteDoc(doc(db, btn.dataset.col, btn.dataset.id));
-        loadMenu();
-      });
     });
   }
 
@@ -588,8 +675,7 @@
     document.getElementById('menu-price').value = '';
     document.getElementById('menu-time').value = '';
     document.getElementById('menu-small-desc').value = '';
-    showStatus('menu-status');
-    loadMenu();
+    showStatus('menu-status'); loadMenu();
   });
 
   // ===== セットメニュー =====
@@ -613,21 +699,38 @@
       row.className = 'item-row';
       row.innerHTML = `
         <div class="order-btns">
-          <button class="btn-order" ${i === 0 ? 'disabled' : ''} data-dir="up" data-i="${i}">▲</button>
-          <button class="btn-order" ${i === items.length - 1 ? 'disabled' : ''} data-dir="down" data-i="${i}">▼</button>
+          <button class="btn-order" ${i===0?'disabled':''} data-dir="up">▲</button>
+          <button class="btn-order" ${i===items.length-1?'disabled':''} data-dir="down">▼</button>
         </div>
         <div class="item-row-left">
           <p class="item-row-title">${item.name}</p>
-          <p class="item-row-meta">${item.priceOld} → ${item.priceNew}　${item.note || ''}</p>
+          <p class="item-row-meta">${item.priceOld||''} → ${item.priceNew||''}　${item.note||''}</p>
         </div>
         <div class="item-row-actions">
+          <button class="btn-edit">編集</button>
           <button class="btn-delete" data-id="${item.id}" data-col="setmenu">削除</button>
         </div>`;
       row.querySelectorAll('.btn-order').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          await moveItem('setmenu', items, i, btn.dataset.dir);
-          loadSetMenu();
+        btn.addEventListener('click', async () => { await moveItem('setmenu', items, i, btn.dataset.dir); loadSetMenu(); });
+      });
+      row.querySelector('.btn-edit').addEventListener('click', () => {
+        openModal('セットメニューを編集', [
+          { key:'name',     label:'セット名', value: item.name },
+          { key:'detail',   label:'詳細説明', type:'textarea', value: item.detail || '' },
+          { key:'priceOld', label:'通常価格', value: item.priceOld || '' },
+          { key:'priceNew', label:'割引価格', value: item.priceNew || '' },
+          { key:'note',     label:'備考', value: item.note || '' },
+        ], async () => {
+          await updateDoc(doc(db, 'setmenu', item.id), {
+            name: getModalVal('name'), detail: getModalVal('detail'),
+            priceOld: getModalVal('priceOld'), priceNew: getModalVal('priceNew'), note: getModalVal('note'),
+          });
+          modal.classList.remove('open'); loadSetMenu();
         });
+      });
+      row.querySelector('.btn-delete').addEventListener('click', async () => {
+        if (!confirm('削除しますか？')) return;
+        await deleteDoc(doc(db, 'setmenu', item.id)); loadSetMenu();
       });
       listEl.appendChild(row);
     });
@@ -642,15 +745,13 @@
     const note = document.getElementById('set-note').value.trim();
     if (!name || !priceNew) return alert('セット名と割引価格を入力してください');
     const snap = await getDocs(collection(db, 'setmenu'));
-    const order = snap.size + 1;
-    await addDoc(collection(db, 'setmenu'), { name, detail, priceOld, priceNew, note, order, createdAt: serverTimestamp() });
+    await addDoc(collection(db, 'setmenu'), { name, detail, priceOld, priceNew, note, order: snap.size + 1, createdAt: serverTimestamp() });
     document.getElementById('set-name').value = '';
     document.getElementById('set-detail').value = '';
     document.getElementById('set-price-old').value = '';
     document.getElementById('set-price-new').value = '';
     document.getElementById('set-note').value = '';
-    showStatus('set-status');
-    loadSetMenu();
+    showStatus('set-status'); loadSetMenu();
   });
 
   // ===== 削除 共通 =====

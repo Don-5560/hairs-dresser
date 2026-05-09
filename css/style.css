@@ -998,9 +998,10 @@ li {
 ===================== */
 @media screen and (max-width: 768px) {
 
-  /* ナビ：スマホではPCリンクを隠してハンバーガーを表示 */
+  /* ナビ */
   #nav {
     padding: 0 20px;
+    height: 60px;
   }
 
   .nav-links {
@@ -1011,109 +1012,137 @@ li {
     display: flex;
   }
 
-  /* ヒーロー：縦並びに変更 */
+  /* ヒーロー：縦並び */
   #hero {
     flex-direction: column;
     min-height: auto;
+    padding-top: 60px;
   }
 
   .hero-text {
     width: 100%;
-    padding: 48px 24px;
-    order: 2; /* テキストを下に */
+    padding: 40px 24px;
+    order: 2;
+  }
+
+  .hero-title {
+    font-size: clamp(52px, 14vw, 80px);
   }
 
   .hero-img {
     width: 100%;
-    order: 1; /* 画像を上に */
-    min-height: 280px;
-  }
-
-  .hero-img-inner {
-    min-height: 280px;
+    order: 1;
+    min-height: 260px;
   }
 
   .hero-img-caption {
-    bottom: 16px;
-    left: 16px;
+    bottom: 12px;
+    left: 12px;
+    font-size: 10px;
   }
 
-  /* EVENT：スマホでは縦並び */
-  #event {
-    padding: 64px 24px;
+  .hero-btn {
+    padding: 14px 28px;
+    font-size: 10px;
+  }
+
+  /* NEWS */
+  #news {
+    padding: 56px 24px;
+  }
+
+  .event-header {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 28px;
   }
 
   .event-item {
     flex-direction: column;
-    gap: 8px;
-    align-items: flex-start; /* 左寄せ */
+    gap: 6px;
+    align-items: flex-start;
+    padding: 20px 0;
   }
 
   .event-meta {
-    min-width: unset; /* PCで設定した最小幅をリセット */
+    min-width: unset;
   }
 
-  /* ABOUT：縦並びに変更 */
+  /* ABOUT */
   #about {
     flex-direction: column;
   }
 
   .about-img {
     width: 100%;
-    min-height: 240px;
+    min-height: 220px;
   }
 
   .about-text {
     width: 100%;
-    padding: 48px 24px;
+    padding: 40px 24px;
   }
 
-  /* STAFF：2列に変更（4列→2列） */
-  #staff {
-    padding: 64px 24px;
-  }
-
-  .staff-grid {
-    flex-wrap: wrap;
-  }
-
-  .staff-card {
-    flex: 0 0 calc(50% - 12px); /* 2列 */
-  }
-
-  /* MENU：縦並びに変更 */
+  /* MENU（トップページ） */
   #menu {
-    padding: 64px 24px;
+    padding: 56px 24px;
   }
 
   .menu-grid {
     flex-direction: column;
+    gap: 16px;
   }
 
-  /* STORE：縦並びに変更 */
+  .menu-item {
+    padding: 24px;
+  }
+
+  /* STORE */
   #store {
-    padding: 64px 24px;
     flex-direction: column;
+    padding: 56px 24px;
     gap: 40px;
+  }
+
+  .store-info {
+    width: 100%;
   }
 
   .store-map {
     width: 100%;
-    height: 240px;
+    height: 220px;
   }
 
-  /* フッター：縦並びに変更 */
+  .store-map iframe {
+    height: 220px;
+  }
+
+  /* カレンダー */
+  .store-calendar {
+    margin-top: 32px;
+  }
+
+  .cal-cell {
+    font-size: 11px;
+    padding: 6px 2px;
+  }
+
+  /* フッター */
   #footer {
-    padding: 48px 24px 24px;
+    padding: 40px 24px 24px;
   }
 
   .footer-top {
     flex-direction: column;
-    gap: 32px;
+    gap: 24px;
   }
 
   .footer-right {
     text-align: left;
+  }
+
+  .footer-logo {
+    font-size: 20px;
   }
 
 }
